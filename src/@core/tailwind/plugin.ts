@@ -27,6 +27,15 @@ module.exports = plugin(function () {}, {
       '2xl': '1920px'
     },
     extend: {
+      animation: {
+        gradient: "gradientMove 3s infinite alternate",
+      },
+      keyframes: {
+        gradientMove: {
+          "0%": { backgroundPosition: "100% 100%" },
+          "100%": { backgroundPosition: "0% 0%" },
+        },
+      },
       boxShadow: {
         xs: 'var(--mui-customShadows-xs)',
         sm: 'var(--mui-customShadows-sm)',

@@ -51,7 +51,7 @@ export type Config = {
 
 const themeConfig: Config = {
   templateName: 'Mutu',
-  homePageUrl: '/home',
+  homePageUrl: '/',
   settingsCookieName: 'Mutu-mui-next-demo-1',
   mode: 'system', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'

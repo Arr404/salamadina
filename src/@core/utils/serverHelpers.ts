@@ -9,6 +9,7 @@ import type { SystemMode } from '@core/types'
 import themeConfig from '@configs/themeConfig'
 
 // Helper to parse cookies
+/*
 const parseCookies = (cookieString: string): Record<string, string> => {
   return cookieString
     .split('; ')
@@ -20,13 +21,21 @@ const parseCookies = (cookieString: string): Record<string, string> => {
   return acc
     }, {} as Record<string, string>)
 }
+*/
 
 export const getSettingsFromCookie = (): Settings => {
-  const cookieName = themeConfig.settingsCookieName
-  const cookies = parseCookies(document.cookie)
+  const cookieName = themeConfig.settingsCookieName;
 
-  return JSON.parse(cookies[cookieName] || '{}')
-}
+  if (typeof window === 'undefined') {
+    // Return a default value when running in a non-browser environment
+    return {} as Settings;
+  }
+
+  const cookies = Cookies.get(cookieName);
+
+  return JSON.parse(cookies || '{}');
+
+};
 
 export const getMode = () => {
   const settingsCookie = getSettingsFromCookie()
