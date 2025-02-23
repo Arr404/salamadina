@@ -1,15 +1,18 @@
-
 // Type Imports
-import type { ChildrenType, Direction } from '@core/types'
+import { light } from '@mui/material/styles/createPalette'
+import ThemeProvider from '@components/theme'
+import type { ChildrenType,Direction } from '@core/types'
 
 // Context Imports
 import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
-import ThemeProvider from '@components/theme'
 
 // Util Imports
-import { getMode, getSettingsFromCookie, getSystemMode } from '@core/utils/serverHelpers'
+import { getSettingsFromCookie } from '@core/utils/serverHelpers'
 import ReduxProvider from '@/redux-store/ReduxProvider'
+
+
+
 
 type Props = ChildrenType & {
   direction: Direction
@@ -17,17 +20,14 @@ type Props = ChildrenType & {
 
 const Providers = (props: Props) => {
   // Props
-  const { children, direction } = props
+  const { children } = props
 
-  // Vars
-  const mode = getMode()
   const settingsCookie = getSettingsFromCookie()
-  const systemMode = getSystemMode()
 
   return (
     <VerticalNavProvider>
-      <SettingsProvider settingsCookie={settingsCookie} mode={mode}>
-        <ThemeProvider direction={direction} systemMode={systemMode}>
+      <SettingsProvider settingsCookie={settingsCookie}>
+        <ThemeProvider direction={"ltr"} systemMode={"light"}>
           <ReduxProvider>{children}</ReduxProvider>
         </ThemeProvider>
       </SettingsProvider>

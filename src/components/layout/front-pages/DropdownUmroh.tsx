@@ -55,90 +55,16 @@ type MenuWrapperProps = {
 // Constants
 const pageData = [
   {
-    title: 'Pricing',
-    href: '/pricing'
+    title: 'Umrah',
+    href: '/Umrah'
   },
   {
-    title: 'Payment',
-    href: '/payment'
+    title: 'Umrah',
+    href: '/Umrah'
   },
   {
-    title: 'Checkout',
-    href: '/checkout'
-  },
-  {
-    title: 'Help Center',
-    href: '/help-center'
-  }
-]
-
-const authData = [
-  {
-    title: 'Login (Basic)',
-    href: '/login-v1'
-  },
-  {
-    title: 'Login (Cover)',
-    href: '/login-v2'
-  },
-  {
-    title: 'Register (Basic)',
-    href: '/register-v1'
-  },
-  {
-    title: 'Register (Cover)',
-    href: '/register-v2'
-  },
-  {
-    title: 'Register (Multi-steps)',
-    href: '/register-multi-steps'
-  },
-  {
-    title: 'Forgot Password (Basic)',
-    href: '/forgot-password-v1'
-  },
-  {
-    title: 'Forgot Password (Cover)',
-    href: '/forgot-password-v2'
-  },
-  {
-    title: 'Reset Password (Basic)',
-    href: '/reset-password-v1'
-  },
-  {
-    title: 'Reset Password (Cover)',
-    href: '/reset-password-v2'
-  }
-]
-
-const othersData = [
-  {
-    title: 'Under Maintenance',
-    href: '/misc/under-maintenance'
-  },
-  {
-    title: 'Coming Soon',
-    href: '/misc/coming-soon'
-  },
-  {
-    title: 'Not Authorized',
-    href: '/misc/401-not-authorized'
-  },
-  {
-    title: 'Verify Email (Basic)',
-    href: '/auth/verify-email-v1'
-  },
-  {
-    title: 'Verify Email (Cover)',
-    href: '/auth/verify-email-v2'
-  },
-  {
-    title: 'Two Steps (Basic)',
-    href: '/auth/two-steps-v1'
-  },
-  {
-    title: 'Two Steps (Cover)',
-    href: '/auth/two-steps-v2'
+    title: 'Umrah',
+    href: '/Umrah'
   }
 ]
 
@@ -179,7 +105,7 @@ const MenuWrapper = (props: MenuWrapperProps) => {
   )
 }
 
-const DropdownMenu = (props: Props) => {
+const DropdownUmroh = (props: Props) => {
   // Props
   const { isBelowLgScreen, isDrawerOpen, setIsDrawerOpen } = props
 
@@ -273,17 +199,17 @@ const DropdownMenu = (props: Props) => {
         })}
         {...(isBelowLgScreen
           ? {
-              onClick: (e: MouseEvent) => {
-                e.preventDefault()
-                setIsOpen(!isOpen)
-              }
+            onClick: (e: MouseEvent) => {
+              e.preventDefault()
+              setIsOpen(!isOpen)
             }
+          }
           : {
-              ref: refs.setReference,
-              ...getReferenceProps()
-            })}
+            ref: refs.setReference,
+            ...getReferenceProps()
+          })}
       >
-        <span>Pages</span>
+        <span>Umroh</span>
         <i
           className={classnames(
             {
@@ -314,9 +240,9 @@ const DropdownMenu = (props: Props) => {
           {pageData.map((page, index) => (
             <Link
               key={index}
-              href={'/front-pages' + page.href}
+              href={page.href}
               className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
-                'text-primary': pathname.includes('/front-pages' + page.href)
+                'text-primary': pathname.includes( page.href)
               })}
               onClick={handleLinkClick}
             >
@@ -325,7 +251,7 @@ const DropdownMenu = (props: Props) => {
             </Link>
           ))}
         </div>
-        <div className='flex flex-col gap-4'>
+        {/*<div className='flex flex-col gap-4'>
           <div className='flex gap-3 items-center'>
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-lock' />
@@ -344,8 +270,8 @@ const DropdownMenu = (props: Props) => {
               <span>{page.title}</span>
             </Link>
           ))}
-        </div>
-        <div className='flex flex-col gap-4'>
+        </div>*/}
+       {/* <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-3'>
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-photo' />
@@ -364,10 +290,10 @@ const DropdownMenu = (props: Props) => {
               <span>{page.title}</span>
             </Link>
           ))}
-        </div>
+        </div>*/}
         {!isBelowLgScreen && (
           <div className='flex bg-backgroundDefault p-2 rounded'>
-            <img src='/images/front-pages/dropdown-image.png' width='385' alt='dropdown image' className='rounded' />
+            <img src='/images/landing/umrah.jpg' width='385' alt='dropdown image' className='rounded' />
           </div>
         )}
       </MenuWrapper>
@@ -375,4 +301,4 @@ const DropdownMenu = (props: Props) => {
   )
 }
 
-export default DropdownMenu
+export default DropdownUmroh

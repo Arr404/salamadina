@@ -10,15 +10,21 @@ import Chip from '@mui/material/Chip'
 import classnames from 'classnames'
 
 // Hook Imports
+import {  Users, CalendarCheck, MapPin, BookOpen } from "lucide-react";
+
 import { useIntersection } from '@/hooks/useIntersection'
 
-// SVG Imports
+import User from '@assets/svg/front-pages/landing-page/User'
+import Rocket from '@assets/svg/front-pages/landing-page/Rocket'
+
+/*// SVG Imports
 import Paper from '@assets/svg/front-pages/landing-page/Paper'
 import Check from '@assets/svg/front-pages/landing-page/Check'
 import User from '@assets/svg/front-pages/landing-page/User'
 import LaptopCharging from '@assets/svg/front-pages/landing-page/LaptopCharging'
 import Rocket from '@assets/svg/front-pages/landing-page/Rocket'
-import Document from '@assets/svg/front-pages/landing-page/Document'
+import Document from '@assets/svg/front-pages/landing-page/Document'*/
+
 
 // Styles Imports
 import frontCommonStyles from '@views/styles.module.css'
@@ -26,36 +32,40 @@ import frontCommonStyles from '@views/styles.module.css'
 // Data
 const feature = [
   {
-    icon: <LaptopCharging color='var(--mui-palette-primary-main)' />,
-    title: 'Quality Code',
-    description: 'Code structure that all developers will easily understand and fall in love with.'
+    icon: <User color='var(--mui-palette-primary-main)' />,
+    title: 'Hajj Guidance',
+    description: 'Comprehensive step-by-step guidance for a smooth and spiritually fulfilling Hajj journey.'
   },
   {
     icon: <Rocket color='var(--mui-palette-primary-main)' />,
-    title: 'Continuous Updates',
-    description: 'Free updates for the next 12 months, including new demos and features.'
+    title: 'Umrah Packages',
+    description: 'Tailored Umrah packages that suit different budgets, ensuring comfort and convenience.'
   },
   {
-    icon: <Paper color='var(--mui-palette-primary-main)' />,
-    title: 'Stater-Kit',
-    description: 'Start your project quickly without having to remove unnecessary features.'
+    icon: <CalendarCheck  width={64}
+                          height={64} color='var(--mui-palette-primary-main)' />,
+    title: 'Flexible Booking',
+    description: 'Easily schedule your Hajj or Umrah trip with flexible dates and reliable services.'
   },
   {
-    icon: <Check color='var(--mui-palette-primary-main)' />,
-    title: 'API Ready',
-    description: 'Just change the endpoint and see your own data loaded within seconds.'
+    icon: <MapPin width={64}
+                  height={64} color='var(--mui-palette-primary-main)' />,
+    title: 'Guided Tours',
+    description: 'Explore the holy cities with expert guides who provide historical and spiritual insights.'
   },
   {
-    icon: <User color='var(--mui-palette-primary-main)' />,
-    title: 'Excellent Support',
-    description: 'An easy-to-follow doc with lots of references and code examples.'
+    icon: <Users width={64}
+                 height={64} color='var(--mui-palette-primary-main)' />,
+    title: 'Group & Family Plans',
+    description: 'Special discounts and tailored services for families and group travelers.'
   },
   {
-    icon: <Document color='var(--mui-palette-primary-main)' />,
-    title: 'Well Documented',
-    description: 'An easy-to-follow doc with lots of references and code examples.'
+    icon: <BookOpen width={64}
+                    height={64} color='var(--mui-palette-primary-main)' />,
+    title: 'Educational Resources',
+    description: 'Access to books, videos, and live sessions to prepare for your pilgrimage.'
   }
-]
+];
 
 const UsefulFeature = () => {
   // Refs
@@ -79,7 +89,7 @@ const UsefulFeature = () => {
       { threshold: 0.35 }
     )
 
-    ref.current && observer.observe(ref.current)
+    ref.current && observer.observe(ref.current as HTMLDivElement)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -92,14 +102,14 @@ const UsefulFeature = () => {
             <div className='flex items-center gap-x-2'>
               <Typography color='text.primary' variant='h4' className='text-center'>
                 <span className='relative z-[1] font-extrabold'>
-                  Everything you need
+                  Untukmu
                   <img
-                    src='/images/front-pages/landing-page/bg-shape.png'
+                    src='/images/landing/bg-shape.png'
                     alt='bg-shape'
                     className='absolute block-end-0 z-[1] bs-[40%] is-[125%] sm:is-[132%] -inline-start-[13%] sm:inline-start-[-19%] block-start-[17px]'
                   />
                 </span>{' '}
-                to start your next project
+                Sahabat Salam
               </Typography>
             </div>
             <Typography className='text-center'>

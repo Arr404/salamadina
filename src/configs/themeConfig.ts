@@ -50,9 +50,9 @@ export type Config = {
 }
 
 const themeConfig: Config = {
-  templateName: 'Mutu',
+  templateName: 'Salamadina',
   homePageUrl: '/',
-  settingsCookieName: 'Mutu-mui-next-demo-1',
+  settingsCookieName: 'Salamadina-mui-next-1',
   mode: 'system', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'
   semiDark: false, // true, false

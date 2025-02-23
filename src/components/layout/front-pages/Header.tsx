@@ -1,7 +1,9 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+
+import Image from "next/image";
 
 // Next Imports
 import Link from 'next/link'
@@ -20,8 +22,6 @@ import classnames from 'classnames'
 import type { Mode } from '@core/types'
 
 // Component Imports
-import Logo from '@components/layout/shared/Logo'
-import ModeDropdown from '@components/layout/shared/ModeDropdown'
 import FrontMenu from './FrontMenu'
 import CustomIconButton from '@core/components/mui/IconButton'
 
@@ -30,8 +30,10 @@ import { frontLayoutClasses } from '@layouts/utils/layoutClasses'
 
 // Styles Imports
 import styles from './styles.module.css'
+import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
 
-const Header = ({ mode }: { mode: Mode }) => {
+const Header = ({ mode, setIsLoading }: { mode: Mode, setIsLoading: Dispatch<SetStateAction<boolean>> }) => {
+
   // States
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
@@ -45,49 +47,78 @@ const Header = ({ mode }: { mode: Mode }) => {
   })
 
   return (
-    <header className={classnames(frontLayoutClasses.header, styles.header)}>
+    <header className={`${classnames(frontLayoutClasses.header, styles.header)} z-10`}>
       <div className={classnames(frontLayoutClasses.navbar, styles.navbar, { [styles.headerScrolled]: trigger })}>
         <div className={classnames(frontLayoutClasses.navbarContent, styles.navbarContent)}>
           {isBelowLgScreen ? (
             <div className='flex items-center gap-2 sm:gap-4'>
-              <IconButton onClick={() => setIsDrawerOpen(true)} className='-mis-2'>
-                <i className='tabler-menu-2 text-textPrimary' />
-              </IconButton>
-              <Link href='/front-pages/landing-page'>
-                <Logo />
-              </Link>
+
               <FrontMenu mode={mode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+              <Link href='/landing'>
+                <Image
+                  src="/logo.png"
+                  alt="Company Logo"
+                  width={10}
+                  height={5}
+                  sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
+                  className="w-auto h-auto max-w-full"
+                  priority
+                  placeholder="blur"
+                  blurDataURL="/logo.png" // Uses the same image for placeholder blur effect
+                />
+              </Link>
             </div>
           ) : (
             <div className='flex items-center gap-10'>
-              <Link href='/front-pages/landing-page'>
-                <Logo />
-              </Link>
               <FrontMenu mode={mode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+
             </div>
           )}
+          {isBelowLgScreen ? (
+            <></>
+          ) : (
+            <Link href='/landing'>
+              <Image
+                src="/logo.png"
+                alt="Company Logo"
+                width={10}
+                height={5}
+                sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
+                className="w-auto h-auto max-w-full"
+                priority
+                placeholder="blur"
+                blurDataURL="/logo.png" // Uses the same image for placeholder blur effect
+              />
+            </Link>
+          )}
+
           <div className='flex items-center gap-2 sm:gap-4'>
-            <ModeDropdown />
+            <LanguageDropdown setIsLoading={setIsLoading} />
             {isBelowLgScreen ? (
-              <CustomIconButton
-                component={Link}
-                variant='contained'
-                href='https://1.envato.market/vuexy_admin'
-                color='primary'
-                target='_blank'
-              >
-                <i className='tabler-shopping-cart text-xl' />
-              </CustomIconButton>
+              <>
+                <CustomIconButton
+                  component={Link}
+                  variant='contained'
+                  href="https:wa.me/62800000000"
+                  color='primary'
+                  target='_blank'
+                >
+                  <i className='tabler-user-search text-xl' />
+                </CustomIconButton>
+                <IconButton onClick={() => setIsDrawerOpen(true)} className='-mis-2'>
+                  <i className='tabler-menu-2 text-textPrimary' />
+                </IconButton>
+              </>
             ) : (
               <Button
                 component={Link}
                 variant='contained'
-                href='https://1.envato.market/vuexy_admin'
-                startIcon={<i className='tabler-shopping-cart text-xl' />}
+                href="https:wa.me/62800000000"
+                startIcon={<i className='tabler-user-search text-xl' />}
                 className='whitespace-nowrap'
                 target='_blank'
               >
-                Purchase Now
+                Contact Us
               </Button>
             )}
           </div>

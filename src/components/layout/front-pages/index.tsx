@@ -1,25 +1,39 @@
+'use client'
+
 // Type Imports
+import { useEffect, useState } from 'react'
+
 import type { ChildrenType } from '@core/types'
 
 // Component Imports
 import Footer from '@components/layout/front-pages/Footer'
 import Header from '@components/layout/front-pages/Header'
 
-// Server Action Imports
-import { getServerMode } from '@core/utils/serverHelpers'
 
 // Util Imports
 import { frontLayoutClasses } from '@layouts/utils/layoutClasses'
+import Loading from '@views/loading/page'
 
 const FrontLayout = ({ children }: ChildrenType) => {
   // Vars
-  const mode = getServerMode()
+  const mode = 'light'
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <div className={frontLayoutClasses.root}>
-      <Header mode={mode} />
-      {children}
-      <Footer mode={mode} />
+      <Header mode={mode} setIsLoading={setIsLoading} />
+      {isLoading ? (
+        <>
+          <Loading/>
+        </>
+        ) : (
+        <>
+
+          {children}
+          <Footer mode={mode} />
+        </>
+      )}
+
     </div>
   )
 }

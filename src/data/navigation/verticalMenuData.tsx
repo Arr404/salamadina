@@ -582,13 +582,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
         suffix: <i className='tabler-external-link text-xl' />,
         target: '_blank'
       },
-      {
-        label: dictionary['navigation'].raiseSupport,
-        icon: 'tabler-lifebuoy',
-        suffix: <i className='tabler-external-link text-xl' />,
-        target: '_blank',
-        href: 'https://pixinvent.ticksy.com'
-      },
+
       {
         label: dictionary['navigation'].documentation,
         icon: 'tabler-book-2',
@@ -608,13 +602,7 @@ const verticalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>>)
             label: dictionary['navigation'].itemWithBadge,
             icon: 'tabler-circle'
           },
-          {
-            label: dictionary['navigation'].externalLink,
-            icon: 'tabler-circle',
-            href: 'https://pixinvent.com',
-            target: '_blank',
-            suffix: <i className='tabler-external-link text-xl' />
-          },
+
           {
             label: dictionary['navigation'].menuLevels,
             icon: 'tabler-circle',

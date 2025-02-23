@@ -576,20 +576,6 @@ const horizontalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>
         target: '_blank'
       },
       {
-        label: dictionary['navigation'].raiseSupport,
-        icon: 'tabler-lifebuoy',
-        suffix: <i className='tabler-external-link text-xl' />,
-        target: '_blank',
-        href: 'https://pixinvent.ticksy.com'
-      },
-      {
-        label: dictionary['navigation'].documentation,
-        icon: 'tabler-book-2',
-        suffix: <i className='tabler-external-link text-xl' />,
-        target: '_blank',
-        href: `${process.env.NEXT_PUBLIC_DOCS_URL}`
-      },
-      {
         suffix: {
           label: 'New',
           color: 'info'
@@ -597,13 +583,7 @@ const horizontalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>
         label: dictionary['navigation'].itemWithBadge,
         icon: 'tabler-notification'
       },
-      {
-        label: dictionary['navigation'].externalLink,
-        icon: 'tabler-link',
-        href: 'https://pixinvent.com',
-        target: '_blank',
-        suffix: <i className='tabler-external-link text-xl' />
-      },
+
       {
         label: dictionary['navigation'].menuLevels,
         icon: 'tabler-menu-2',

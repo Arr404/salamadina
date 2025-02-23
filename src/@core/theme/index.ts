@@ -18,7 +18,9 @@ import typography from './typography'
 
 const public_sans = Public_Sans({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700', '800', '900'] })
 
-const theme = (settings: Settings, mode: SystemMode, direction: Theme['direction']): Theme => {
+const theme = (settings: Settings, mode: SystemMode): Theme => {
+  const direction: Theme['direction'] = 'ltr'
+
   return {
     direction,
     components: overrides(settings.skin as Skin),

@@ -376,14 +376,7 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
           >
             {dictionary['navigation'].menuExamples}
           </MenuItem>
-          <MenuItem
-            suffix={<i className='tabler-external-link text-xl' />}
-            target='_blank'
-            href='https://pixinvent.ticksy.com'
-            icon={<i className='tabler-lifebuoy' />}
-          >
-            {dictionary['navigation'].raiseSupport}
-          </MenuItem>
+
           <MenuItem
             suffix={<i className='tabler-external-link text-xl' />}
             target='_blank'
@@ -398,14 +391,7 @@ const HorizontalMenu = ({ dictionary }: { dictionary: Awaited<ReturnType<typeof 
           >
             {dictionary['navigation'].itemWithBadge}
           </MenuItem>
-          <MenuItem
-            icon={<i className='tabler-link' />}
-            href='https://pixinvent.com'
-            target='_blank'
-            suffix={<i className='tabler-external-link text-xl' />}
-          >
-            {dictionary['navigation'].externalLink}
-          </MenuItem>
+
           <SubMenu label={dictionary['navigation'].menuLevels} icon={<i className='tabler-menu-2' />}>
             <MenuItem>{dictionary['navigation'].menuLevel2}</MenuItem>
             <SubMenu label={dictionary['navigation'].menuLevel2}>

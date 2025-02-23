@@ -1,114 +1,83 @@
-'use client'
+import React, { useEffect, useState } from "react";
 
-// React Imports
-import { useRef, useState } from 'react'
+import Image from "next/image";
 
-// Next Imports
-import Link from 'next/link'
-import { usePathname, useParams } from 'next/navigation'
+import { Dropdown } from "./Dropdown";
 
-// MUI Imports
-import IconButton from '@mui/material/IconButton'
-import Popper from '@mui/material/Popper'
-import Fade from '@mui/material/Fade'
-import Paper from '@mui/material/Paper'
-import ClickAwayListener from '@mui/material/ClickAwayListener'
-import MenuList from '@mui/material/MenuList'
-import MenuItem from '@mui/material/MenuItem'
 
-// Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import i18n from "@/configs/i18n";
 
-type LanguageDataType = {
-  langCode: string
-  langName: string
-}
+import languages from "./languages";
 
-const getLocalePath = (pathName: string, locale: string) => {
-  if (!pathName) return '/'
-  const segments = pathName.split('/')
+const LanguageDropdown = ({setIsLoading} : {setIsLoading:any}) => {
+  const [selectedLang, setSelectedLang] = useState("");
 
-  segments[1] = locale
+  useEffect(() => {
+    const currentLanguage = localStorage.getItem("I18N_LANGUAGE") ?? "en";
 
-  return segments.join('/')
-}
+    setSelectedLang(currentLanguage);
+  }, []);
 
-// Vars
-const languageData: LanguageDataType[] = [
-  {
-    langCode: 'en',
-    langName: 'English'
-  },
-  {
-    langCode: 'fr',
-    langName: 'French'
-  },
-  {
-    langCode: 'ar',
-    langName: 'Arabic'
-  }
-]
-
-const LanguageDropdown = () => {
-  // States
-  const [open, setOpen] = useState(false)
-
-  // Refs
-  const anchorRef = useRef<HTMLButtonElement | null>(null)
-
-  // Hooks
-  const pathName = usePathname()
-  const { settings } = useSettings()
-  const { lang } = useParams()
-
-  const handleClose = () => {
-    setOpen(false)
-  }
-
-  const handleToggle = () => {
-    setOpen(prevOpen => !prevOpen)
-  }
+  const changeLanguageAction = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("I18N_LANGUAGE", lang);
+    setSelectedLang(lang);
+  };
 
   return (
-    <>
-      <IconButton ref={anchorRef} onClick={handleToggle} className='text-textPrimary'>
-        <i className='tabler-language' />
-      </IconButton>
-      <Popper
-        open={open}
-        transition
-        disablePortal
-        placement='bottom-start'
-        anchorEl={anchorRef.current}
-        className='min-is-[160px] !mbs-3 z-[1]'
+    <Dropdown className="relative flex items-center h-header">
+      <Dropdown.Trigger
+        type="button"
+        className="inline-flex justify-center items-center p-0 text-topbar-item transition-all size-[37.5px] duration-200 ease-linear bg-topbar rounded-md dropdown-toggle btn hover:bg-topbar-item-bg-hover hover:text-topbar-item-hover"
+        id="flagsDropdown"
+        data-bs-toggle="dropdown"
       >
-        {({ TransitionProps, placement }) => (
-          <Fade
-            {...TransitionProps}
-            style={{ transformOrigin: placement === 'bottom-start' ? 'left top' : 'right top' }}
+        <Image
+          src={languages[selectedLang]?.flag || ""}
+          alt="header-lang-img"
+          width={20}
+          height={20}
+          className={`h-5 rounded-sm transition-opacity duration-300`}
+          onLoad={() => setIsLoading(false)}
+          onError={() => setIsLoading(false)} // Ensures it stops loading on error
+        />
+      </Dropdown.Trigger>
+      <Dropdown.Content
+        placement="right-end"
+        className="absolute z-50 p-3 md:p-4 xl:p-5 ltr:text-left rtl:text-right bg-white rounded-md shadow-md
+             !top-4 dropdown-menu min-w-[10rem] md:min-w-[12rem] xl:min-w-[14rem]
+             flex flex-col gap-3 xl:gap-4 dark:bg-zink-600"
+        aria-labelledby="flagsDropdown"
+      >
+        {Object.keys(languages).map((key) => (
+          <a
+            href=""
+            className={`flex items-center gap-3 md:gap-4 xl:gap-4 group/items language
+                  ${selectedLang === key ? "active" : "none"}
+                  px-2 py-2 md:px-3 md:py-3 xl:px-3 xl:py-3 transition-all`}
+            title={languages[key]?.label || ""}
+            onClick={() => changeLanguageAction(key)}
+            key={key}
           >
-            <Paper className={settings.skin === 'bordered' ? 'border shadow-none' : 'shadow-lg'}>
-              <ClickAwayListener onClickAway={handleClose}>
-                <MenuList onKeyDown={handleClose}>
-                  {languageData.map(locale => (
-                    <MenuItem
-                      key={locale.langCode}
-                      component={Link}
-                      href={getLocalePath(pathName, locale.langCode)}
-                      onClick={handleClose}
-                      selected={lang === locale.langCode}
-                    >
-                      {locale.langName}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Fade>
-        )}
-      </Popper>
-    </>
-  )
-}
+            <Image
+              src={languages[key]?.flag || ""}
+              alt=""
+              width={20}
+              height={20}
+              className="shadow-sm object-cover w-4 h-4 md:w-5 md:h-5 xl:w-6 xl:h-6 rounded-full"
+            />
+            <h6 className="transition-all duration-200 ease-linear font-medium text-slate-600
+                     md:text-sm xl:text-base dark:text-zink-200
+                     group-hover/items:text-custom-500">
+              {languages[key]?.label || ""}
+            </h6>
+          </a>
+        ))}
+      </Dropdown.Content>
 
-export default LanguageDropdown
+
+    </Dropdown>
+  );
+};
+
+export default LanguageDropdown;

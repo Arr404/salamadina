@@ -8,8 +8,6 @@ import Button from '@mui/material/Button'
 // Third-party Imports
 import classnames from 'classnames'
 
-// Type Imports
-import type { SystemMode } from '@core/types'
 
 // Hooks Imports
 import { useImageVariant } from '@core/hooks/useImageVariant'
@@ -17,21 +15,21 @@ import { useImageVariant } from '@core/hooks/useImageVariant'
 // Styles Imports
 import frontCommonStyles from '@views/styles.module.css'
 
-const GetStarted = ({ mode }: { mode: SystemMode }) => {
+const GetStarted = () => {
   // Vars
   const getStartedImageLight = '/images/front-pages/landing-page/get-started-bg-light.png'
   const getStartedImageDark = '/images/front-pages/landing-page/get-started-bg-dark.png'
 
-  // Hooks
+  /*// Hooks
   const getStartedImage = useImageVariant(mode, getStartedImageLight, getStartedImageDark)
-
+*/
   return (
     <section className='relative'>
-      <img
+     {/* <img
         src={getStartedImage}
         alt='background-image'
         className='absolute is-full flex -z-1 pointer-events-none bs-full block-end-0'
-      />
+      />*/}
       <div
         className={classnames(
           'flex items-center flex-wrap justify-center lg:justify-between gap-y-4 gap-x-28',

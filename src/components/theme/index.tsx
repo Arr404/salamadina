@@ -5,6 +5,8 @@ import { useMemo } from 'react'
 
 // MUI Imports
 import { deepmerge } from '@mui/utils'
+import type { CssVarsThemeOptions
+} from '@mui/material/styles';
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
   experimental_extendTheme as extendTheme,
@@ -21,7 +23,7 @@ import { useMedia } from 'react-use'
 import stylisRTLPlugin from 'stylis-plugin-rtl'
 
 // Type Imports
-import type { ChildrenType, Direction, SystemMode } from '@core/types'
+import type { ChildrenType, SystemMode } from '@core/types'
 
 // Component Imports
 import ModeChanger from './ModeChanger'
@@ -36,16 +38,16 @@ import { useSettings } from '@core/hooks/useSettings'
 import defaultCoreTheme from '@core/theme'
 
 type Props = ChildrenType & {
-  direction: Direction
   systemMode: SystemMode
 }
 
 const ThemeProvider = (props: Props) => {
   // Props
-  const { children, direction, systemMode } = props
+  const { children, systemMode } = props
 
   // Hooks
   const { settings } = useSettings()
+
   const isDark = useMedia('(prefers-color-scheme: dark)', systemMode === 'dark')
 
   // Vars
@@ -87,9 +89,9 @@ const ThemeProvider = (props: Props) => {
       }
     }
 
-    const coreTheme = deepmerge(defaultCoreTheme(settings, currentMode, direction), newColorScheme)
+    const coreTheme = deepmerge(defaultCoreTheme(settings, currentMode), newColorScheme)
 
-    return extendTheme(coreTheme)
+    return extendTheme(coreTheme as CssVarsThemeOptions)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.primaryColor, settings.skin, currentMode])
@@ -98,7 +100,7 @@ const ThemeProvider = (props: Props) => {
     <AppRouterCacheProvider
       options={{
         prepend: true,
-        ...(direction === 'rtl' && {
+        ...( {
           key: 'rtl',
           stylisPlugins: [stylisRTLPlugin]
         })

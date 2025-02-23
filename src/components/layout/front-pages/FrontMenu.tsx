@@ -24,7 +24,9 @@ import type { Mode } from '@core/types'
 import { useIntersection } from '@/hooks/useIntersection'
 
 // Component Imports
-import DropdownMenu from './DropdownMenu'
+import DropdownUmroh from './DropdownUmroh'
+import DropdownHaji from '@components/layout/front-pages/DropdownHaji'
+import DropdownEdutrip from '@components/layout/front-pages/DropdownEdutrip'
 
 type Props = {
   mode: Mode
@@ -91,73 +93,37 @@ const FrontMenu = (props: Props) => {
       <Typography
         color='text.primary'
         component={Link}
-        href='/front-pages/landing-page'
+        href='/landing'
         className={classnames('font-medium plb-3 pli-1.5 hover:text-primary', {
           'text-primary':
             !intersections.features &&
             !intersections.team &&
             !intersections.faq &&
             !intersections['contact-us'] &&
-            pathname === '/front-pages/landing-page'
+            pathname === '/landing'
         })}
       >
         Home
       </Typography>
-      <Typography
-        color='text.primary'
-        component={Link}
-        href='/front-pages/landing-page#features'
-        className={classnames('font-medium plb-3 pli-1.5 hover:text-primary', {
-          'text-primary': intersections.features
-        })}
-      >
-        Features
-      </Typography>
-      <Typography
-        color='text.primary'
-        component={Link}
-        href='/front-pages/landing-page#team'
-        className={classnames('font-medium plb-3 pli-1.5 hover:text-primary', {
-          'text-primary': intersections.team
-        })}
-      >
-        Team
-      </Typography>
-      <Typography
-        color='text.primary'
-        component={Link}
-        href='/front-pages/landing-page#faq'
-        className={classnames('font-medium plb-3 pli-1.5 hover:text-primary', {
-          'text-primary': intersections.faq
-        })}
-      >
-        FAQ
-      </Typography>
-      <Typography
-        color='text.primary'
-        component={Link}
-        href='/front-pages/landing-page#contact-us'
-        className={classnames('font-medium plb-3 pli-1.5 hover:text-primary', {
-          'text-primary': intersections['contact-us']
-        })}
-      >
-        Contact us
-      </Typography>
-      <DropdownMenu
+      <DropdownUmroh
         mode={mode}
         isBelowLgScreen={isBelowLgScreen}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
       />
-      <Typography
-        component={Link}
-        color='text.primary'
-        href='/'
-        target='_blank'
-        className='font-medium plb-3 pli-1.5 hover:text-primary'
-      >
-        Admin
-      </Typography>
+      <DropdownHaji
+        mode={mode}
+        isBelowLgScreen={isBelowLgScreen}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
+      <DropdownEdutrip
+        mode={mode}
+        isBelowLgScreen={isBelowLgScreen}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
+
     </Wrapper>
   )
 }

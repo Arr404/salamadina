@@ -3,12 +3,11 @@
 // React Imports
 import { useEffect } from 'react'
 
-// Type Imports
-import type { SystemMode } from '@core/types'
 
 // Component Imports
 import HeroSection from './HeroSection'
 import UsefulFeature from './UsefulFeature'
+import Maps from './Maps'
 import CustomerReviews from './CustomerReviews'
 import OurTeam from './OurTeam'
 import Pricing from './Pricing'
@@ -18,7 +17,7 @@ import GetStarted from './GetStarted'
 import ContactUs from './ContactUs'
 import { useSettings } from '@core/hooks/useSettings'
 
-const LandingPageWrapper = ({ mode }: { mode: SystemMode }) => {
+const LandingPageWrapper = () => {
   // Hooks
   const { updatePageSettings } = useSettings()
 
@@ -32,14 +31,15 @@ const LandingPageWrapper = ({ mode }: { mode: SystemMode }) => {
 
   return (
     <div className='bg-backgroundPaper'>
-      <HeroSection mode={mode} />
+      <HeroSection />
+      <Maps />
       <UsefulFeature />
       <CustomerReviews />
       <OurTeam />
       <Pricing />
       <ProductStat />
       <Faqs />
-      <GetStarted mode={mode} />
+      <GetStarted  />
       <ContactUs />
     </div>
   )

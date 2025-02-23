@@ -1,5 +1,7 @@
+'use client'
 // React Imports
 import { useState, useEffect } from 'react'
+import Image from "next/image";
 
 // Next Imports
 import Link from 'next/link'
@@ -7,42 +9,15 @@ import Link from 'next/link'
 // MUI Imports
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import { useColorScheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import type { Theme } from '@mui/material/styles'
+import CustomIconButton from '@core/components/mui/IconButton'
 
-// Third-party Imports
-import classnames from 'classnames'
 
-// Type Imports
-import type { SystemMode } from '@core/types'
-
-// Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
-
-// Styles Imports
-import styles from './styles.module.css'
-import frontCommonStyles from '@views/styles.module.css'
-
-const HeroSection = ({ mode }: { mode: SystemMode }) => {
+const HeroSection = () => {
   // States
   const [transform, setTransform] = useState('')
 
-  // Vars
-  const dashboardImageLight = '/images/front-pages/landing-page/hero-dashboard-light.png'
-  const dashboardImageDark = '/images/front-pages/landing-page/hero-dashboard-dark.png'
-  const elementsImageLight = '/images/front-pages/landing-page/hero-elements-light.png'
-  const elementsImageDark = '/images/front-pages/landing-page/hero-elements-dark.png'
-  const heroSectionBgLight = '/images/front-pages/landing-page/hero-bg-light.png'
-  const heroSectionBgDark = '/images/front-pages/landing-page/hero-bg-dark.png'
-
-  // Hooks
-  const { mode: muiMode } = useColorScheme()
-  const dashboardImage = useImageVariant(mode, dashboardImageLight, dashboardImageDark)
-  const elementsImage = useImageVariant(mode, elementsImageLight, elementsImageDark)
-  const heroSectionBg = useImageVariant(mode, heroSectionBgLight, heroSectionBgDark)
-
-  const _mode = (muiMode === 'system' ? mode : muiMode) || mode
   const isAboveLgScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'))
 
   useEffect(() => {
@@ -65,54 +40,52 @@ const HeroSection = ({ mode }: { mode: SystemMode }) => {
   }, [])
 
   return (
-    <section id='home' className='overflow-hidden pbs-[75px] -mbs-[75px] relative'>
-      <img
-        src={heroSectionBg}
-        alt='hero-bg'
-        className={classnames('bs-[95%] sm:bs-[85%] md:bs-[80%]', styles.heroSectionBg, {
-          [styles.bgLight]: _mode === 'light',
-          [styles.bgDark]: _mode === 'dark'
-        })}
-      />
-      <div className={classnames('pbs-[88px] overflow-hidden', frontCommonStyles.layoutSpacing)}>
-        <div className='md:max-is-[550px] mbs-0 mbe-7 mli-auto text-center relative'>
-          <Typography
-            className={classnames('font-extrabold sm:text-[42px] text-3xl mbe-4 leading-[48px]', styles.heroText)}
+    <section
+      id="home"
+      className="top-[-3rem] relative overflow-hidden pbs-[75px] -mbs-[75px] rounded-b-[1.5rem] xl:rounded-b-[3rem] flex items-center justify-center text-center min-h-[600px] xl:min-h-[664px]"
+    >
+      {/* Background Image with Fallback Gradient */}
+      <div
+        className=" absolute inset-0 rounded-b-xl bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/logo.png')`, // Change this to your actual image
+          backgroundColor: "#B71E7E", // Base color in case the image takes time to load
+        }}
+        onError={(e) => (e.currentTarget.style.backgroundImage = "none")}
+      >
+        {/* Circular Gradient Overlay */}
+        <div className="top-[-2.5rem] absolute bg-gradient-radial from-[#901D57] to-[#B71E7E] rounded-b-3xl opacity-90"></div>
+      </div>
+
+      {/* Content */}
+      <div className="relative max-w-lg p-8">
+        <Image
+          src="/logo-landscape.png" // Update this to the correct path if needed
+          alt="Logo"
+          width={400} // Adjust based on the original text size
+          height={100} // Adjust based on aspect ratio
+          className="sm:w-[400px] w-[250px] object-contain"
+          priority // Ensures the image loads quickly
+        />
+        <Typography className="font-medium text-white max-w-lg mx-auto">
+
+        </Typography>
+        <div className="flex mbs-6 items-baseline justify-center">
+          <Button
+            component={Link}
+            variant='outlined'
+            href="https:wa.me/62800000000"
+            startIcon={<i className='tabler-user-search text-xl' />}
+            className='bg-white whitespace-nowrap'
+            target='_blank'
           >
-            All in one sass application for your business
-          </Typography>
-          <Typography className='font-medium' color='text.primary'>
-            No coding required to make customizations. The live customizer has everything your marketing need.
-          </Typography>
-          <div className='flex mbs-6 items-baseline justify-center relative'>
-            <div className='flex gap-2 absolute inline-start-[0%] block-start-[41%] max-md:hidden'>
-              <Typography className='font-medium'>Join community</Typography>
-              <img src='/images/front-pages/landing-page/join-community-arrow.png' alt='arrow' height='48' width='60' />
-            </div>
-            <Button
-              component={Link}
-              size='large'
-              href='/front-pages/landing-page#pricing-plans'
-              variant='contained'
-              color='primary'
-            >
-              Get Early Access
-            </Button>
-          </div>
+            Contact Us
+          </Button>
         </div>
       </div>
-      <div
-        className={classnames('relative text-center', frontCommonStyles.layoutSpacing)}
-        style={{ transform: isAboveLgScreen ? transform : 'none' }}
-      >
-        <Link href='/' target='_blank' className='block relative'>
-          <img src={dashboardImage} alt='dashboard-image' className={classnames('mli-auto', styles.heroSecDashboard)} />
-          <div className={classnames('absolute', styles.heroSectionElements)}>
-            <img src={elementsImage} alt='dashboard-elements' />
-          </div>
-        </Link>
-      </div>
     </section>
+
+
   )
 }
 
