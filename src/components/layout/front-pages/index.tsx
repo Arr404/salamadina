@@ -1,7 +1,7 @@
 'use client'
 
 // Type Imports
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import type { ChildrenType } from '@core/types'
 

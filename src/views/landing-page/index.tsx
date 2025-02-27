@@ -16,6 +16,7 @@ import Faqs from './Faqs'
 import GetStarted from './GetStarted'
 import ContactUs from './ContactUs'
 import { useSettings } from '@core/hooks/useSettings'
+import Gallery from '@views/landing-page/Gallery'
 
 const LandingPageWrapper = () => {
   // Hooks
@@ -35,6 +36,7 @@ const LandingPageWrapper = () => {
       <Maps />
       <UsefulFeature />
       <CustomerReviews />
+      <Gallery/>
       <OurTeam />
       <Pricing />
       <ProductStat />

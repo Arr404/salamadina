@@ -9,16 +9,11 @@ import Button from '@mui/material/Button'
 import classnames from 'classnames'
 
 
-// Hooks Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
 
 // Styles Imports
 import frontCommonStyles from '@views/styles.module.css'
 
 const GetStarted = () => {
-  // Vars
-  const getStartedImageLight = '/images/front-pages/landing-page/get-started-bg-light.png'
-  const getStartedImageDark = '/images/front-pages/landing-page/get-started-bg-dark.png'
 
   /*// Hooks
   const getStartedImage = useImageVariant(mode, getStartedImageLight, getStartedImageDark)
@@ -41,21 +36,21 @@ const GetStarted = () => {
             <Typography variant='h3' color='primary' className='font-bold text-[2.125rem]'>
               Ready to Get Started?
             </Typography>
-            <Typography variant='h5' color='text.secondary'>
+            {/*<Typography variant='h5' color='text.secondary'>
               Start your project with a 14-day free trial
-            </Typography>
+            </Typography>*/}
           </div>
           <Button component={Link} href='/front-pages/payment' variant='contained'>
             Get Started
           </Button>
         </div>
-        <div className='flex pbs-4 lg:pbs-[60px] md:pie-4 z-[1]'>
+        {/*<div className='flex pbs-4 lg:pbs-[60px] md:pie-4 z-[1]'>
           <img
             src='/images/front-pages/landing-page/crm-dashboard.png'
             alt='dashboard-image'
             className='max-is-[600px] is-full rounded-bs'
           />
-        </div>
+        </div>*/}
       </div>
     </section>
   )

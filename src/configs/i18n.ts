@@ -11,9 +11,11 @@ const resources = {
 };
 
 // Safe access to localStorage
-const getLanguage = () => {
+const getLanguage = (): "en" | "ind" => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("I18N_LANGUAGE") || "en";
+    const lang = localStorage.getItem("I18N_LANGUAGE") as string | null;
+
+    return (lang === "en" || lang === "ind" ) ? lang : "en"; // Default to 'en'
   }
 
   return "en";

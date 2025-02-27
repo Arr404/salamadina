@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -33,7 +35,7 @@ const LanguageDropdown = ({setIsLoading} : {setIsLoading:any}) => {
         data-bs-toggle="dropdown"
       >
         <Image
-          src={languages[selectedLang]?.flag || ""}
+          src={languages[selectedLang as keyof typeof languages]?.flag || ""}
           alt="header-lang-img"
           width={20}
           height={20}
@@ -55,12 +57,12 @@ const LanguageDropdown = ({setIsLoading} : {setIsLoading:any}) => {
             className={`flex items-center gap-3 md:gap-4 xl:gap-4 group/items language
                   ${selectedLang === key ? "active" : "none"}
                   px-2 py-2 md:px-3 md:py-3 xl:px-3 xl:py-3 transition-all`}
-            title={languages[key]?.label || ""}
+            title={languages[key as keyof typeof languages]?.label || ""}
             onClick={() => changeLanguageAction(key)}
             key={key}
           >
             <Image
-              src={languages[key]?.flag || ""}
+              src={languages[key as keyof typeof languages]?.flag || ""}
               alt=""
               width={20}
               height={20}
@@ -69,7 +71,7 @@ const LanguageDropdown = ({setIsLoading} : {setIsLoading:any}) => {
             <h6 className="transition-all duration-200 ease-linear font-medium text-slate-600
                      md:text-sm xl:text-base dark:text-zink-200
                      group-hover/items:text-custom-500">
-              {languages[key]?.label || ""}
+              {languages[key as keyof typeof languages]?.label || ""}
             </h6>
           </a>
         ))}

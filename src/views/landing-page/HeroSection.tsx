@@ -1,7 +1,7 @@
 'use client'
+
 // React Imports
-import { useState, useEffect } from 'react'
-import Image from "next/image";
+import { useEffect } from 'react'
 
 // Next Imports
 import Link from 'next/link'
@@ -9,26 +9,26 @@ import Link from 'next/link'
 // MUI Imports
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import type { Theme } from '@mui/material/styles'
-import CustomIconButton from '@core/components/mui/IconButton'
+
 
 
 const HeroSection = () => {
   // States
-  const [transform, setTransform] = useState('')
+ /* const [transform, setTransform] = useState('')
 
-  const isAboveLgScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'))
+  const isAboveLgScreen = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'))*/
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const handleMouseMove = (event: MouseEvent) => {
-        const rotateX = (window.innerHeight - 2 * event.clientY) / 100
-        const rotateY = (window.innerWidth - 2 * event.clientX) / 100
+        console.log(event)
 
-        setTransform(
+        /*const rotateX = (window.innerHeight - 2 * event.clientY) / 100
+        const rotateY = (window.innerWidth - 2 * event.clientX) / 100
+*/
+        /*setTransform(
           `perspective(1200px) rotateX(${rotateX < -40 ? -20 : rotateX}deg) rotateY(${rotateY}deg) scale3d(1,1,1)`
-        )
+        )*/
       }
 
       window.addEventListener('mousemove', handleMouseMove)
@@ -48,7 +48,7 @@ const HeroSection = () => {
       <div
         className=" absolute inset-0 rounded-b-xl bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/logo.png')`, // Change this to your actual image
+          backgroundImage: `url('/images/logo.png')`,
           backgroundColor: "#B71E7E", // Base color in case the image takes time to load
         }}
         onError={(e) => (e.currentTarget.style.backgroundImage = "none")}
@@ -59,13 +59,12 @@ const HeroSection = () => {
 
       {/* Content */}
       <div className="relative max-w-lg p-8">
-        <Image
-          src="/logo-landscape.png" // Update this to the correct path if needed
+        <img
+          src="/images/logos-landscape.png"
           alt="Logo"
-          width={400} // Adjust based on the original text size
-          height={100} // Adjust based on aspect ratio
+          width="400"
+          height="100"
           className="sm:w-[400px] w-[250px] object-contain"
-          priority // Ensures the image loads quickly
         />
         <Typography className="font-medium text-white max-w-lg mx-auto">
 

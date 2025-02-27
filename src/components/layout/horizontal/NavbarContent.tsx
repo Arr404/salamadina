@@ -7,7 +7,6 @@ import classnames from 'classnames'
 // Component Imports
 import NavToggle from './NavToggle'
 import Logo from '@components/layout/shared/Logo'
-import LanguageDropdown from '@components/layout/shared/LanguageDropdown'
 import ModeDropdown from '@components/layout/shared/ModeDropdown'
 
 
@@ -38,7 +37,7 @@ const NavbarContent = () => {
       </div>
 
       <div className='flex items-center'>
-        <LanguageDropdown />
+        {/*<LanguageDropdown  setIsLoading={setIsLoading}/>*/}
         <ModeDropdown />
         {/* Language Dropdown, Notification Dropdown, quick access menu dropdown, user dropdown will be placed here */}
       </div>

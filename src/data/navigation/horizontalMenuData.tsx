@@ -486,7 +486,7 @@ const horizontalMenuData = (dictionary: Awaited<ReturnType<typeof getDictionary>
           },
           {
             label: dictionary['navigation'].helpCenter,
-            href: '/front-pages/help-center',
+            href: '/front-pages/umrah',
             target: '_blank',
             excludeLang: true
           }

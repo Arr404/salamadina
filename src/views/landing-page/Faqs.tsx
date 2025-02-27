@@ -29,28 +29,28 @@ type FaqsDataTypes = {
 const FaqsData: FaqsDataTypes[] = [
   {
     id: 'panel1',
-    question: 'Do you charge for each upgrade?',
+    question: 'What is included in your Hajj and Umrah packages?',
     answer:
-      'Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping soufflé. Wafer gummi bears marshmallow pastry pie.'
+      'Our packages typically include flights, accommodation near Haram, transportation, visa processing, guided tours, and meals. Specific inclusions may vary by package, so please check the details for your selected plan.'
   },
   {
     id: 'panel2',
-    question: 'What is regular license?',
+    question: 'Do I need a visa for Hajj or Umrah?',
     active: true,
     answer:
-      'Regular license can be used for end products that do not charge users for access or service(access is free and there will be no monthly subscription fee). Single regular license can be used for single end product and end product can be used by you or your client. If you want to sell end product to multiple clients then you will need to purchase separate license for each client. The same rule applies if you want to use the same end product on multiple domains(unique setup). For more info on regular license you can check official description.'
+      'Yes, a visa is required for both Hajj and Umrah. We assist in obtaining the necessary visa as part of our service. Requirements include a valid passport, vaccination certificates, and other necessary documents.'
   },
   {
     id: 'panel3',
-    question: 'What is extended license?',
+    question: 'What are the accommodation options during Hajj and Umrah?',
     answer:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis et aliquid quaerat possimus maxime! Mollitia reprehenderit neque repellat deleniti delectus architecto dolorum maxime, blanditiis earum ea, incidunt quam possimus cumque.'
+      'We offer a range of accommodations from budget-friendly to premium hotels near Masjid al-Haram in Makkah and Masjid an-Nabawi in Madinah. Our packages specify the hotels included, ensuring comfort and convenience.'
   },
   {
     id: 'panel4',
-    question: 'Which license is applicable for SASS application?',
+    question: 'What is the best time to perform Umrah?',
     answer:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis et aliquid quaerat possimus maxime! Mollitia reprehenderit neque repellat deleniti delectus architecto dolorum maxime, blanditiis earum ea, incidunt quam possimus cumque.'
+      'Umrah can be performed year-round, but many prefer to travel during Ramadan for its spiritual rewards. Off-peak seasons (outside Ramadan and Hajj) offer a less crowded experience and lower costs.'
   }
 ]
 
@@ -91,7 +91,7 @@ const Faqs = () => {
                 Frequently asked
                 <span className='relative z-[1] font-extrabold'>
                   <img
-                    src='/images/front-pages/landing-page/bg-shape.png'
+                    src='/images/landing/bg-shape.png'
                     alt='bg-shape'
                     className='absolute block-end-0 z-[1] bs-[40%] is-[132%] -inline-start-[8%] block-start-[17px]'
                   />{' '}
@@ -108,9 +108,9 @@ const Faqs = () => {
           <Grid container spacing={6}>
             <Grid item xs={12} lg={5} className='text-center'>
               <img
-                src='/images/front-pages/landing-page/boy-sitting-with-laptop.png'
+                src='/images/landing/umrah.jpg'
                 alt='boy with laptop'
-                className='is-[80%] max-is-[320px]'
+                className='rounded-xl is-[80%] max-is-[320px]'
               />
             </Grid>
             <Grid item xs={12} lg={7}>

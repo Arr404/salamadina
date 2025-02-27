@@ -12,7 +12,7 @@ const Layout = ({ children }: Props) => {
 
 
   return (
-    <Providers >
+    <Providers  direction={'ltr'}>
       <BlankLayout >{children}</BlankLayout>
     </Providers>
   )

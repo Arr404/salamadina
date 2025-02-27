@@ -1,6 +1,6 @@
 // React Imports
 import type { SVGAttributes } from 'react'
-import { useEffect } from "react";
+import { useEffect, useState } from 'react'
 
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -143,29 +143,49 @@ const IndonesiaMaps = (props: SVGAttributes<SVGElement>) => {
 
 const IndonesiaMapsWithZoom = () => {
   const controls = useAnimation();
-  const { ref, inView } = useInView({  threshold: 0.2 });
-  const isBelowLgScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
-  const scale = isBelowLgScreen ?  2 : 2
-  const yTranslate = isBelowLgScreen ? -100 : -200
-  const xTranslate = isBelowLgScreen ? 100 : 200
+  const { ref, inView } = useInView({ threshold: 0.2 });
+
+  const isBelowLgScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("lg")
+  );
+
+  const scale = 2;
+  const yTranslate = isBelowLgScreen ? -100 : -200;
+  const xTranslate = isBelowLgScreen ? 100 : 200;
+
+  const [showMarker, setShowMarker] = useState(false);
 
   useEffect(() => {
     if (inView) {
-      controls.start({ scale: scale, y:yTranslate, x:xTranslate, opacity: 1 });
+      controls.start({ scale, y: yTranslate, x: xTranslate, opacity: 1 });
     } else {
-      controls.start({ scale: 1, y:0, opacity: 0 });
+      controls.start({ scale: 1, y: 0, opacity: 0 });
+      setShowMarker(false); // Hide marker when out of view
     }
   }, [inView, controls]);
 
   return (
     <motion.div
       ref={ref as any}
-      initial={{ scale: 1, y:0, opacity: 0 }}
+      initial={{ scale: 1, y: 0, opacity: 0 }}
       animate={controls}
       transition={{ duration: 1.4, ease: "easeOut" }}
-      className="mt-12 overflow-hidden flex justify-center"
+      className="mt-12 overflow-hidden flex justify-center relative"
+      onAnimationComplete={() => setShowMarker(true)} // Show marker after zoom animation
     >
       <IndonesiaMaps />
+
+      {/* Marker Button (Appears after zoom) */}
+      {showMarker && (
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white px-4 py-2 rounded-full shadow-md"
+        >
+          📍
+        </motion.button>
+      )}
     </motion.div>
   );
 };

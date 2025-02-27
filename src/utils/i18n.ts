@@ -1,5 +1,5 @@
-// Config Imports
-import { i18n } from '@configs/i18n'
+/*
+
 
 // Util Imports
 import { ensurePrefix } from '@/utils/string'
@@ -15,3 +15,4 @@ export const getLocalizedUrl = (url: string, languageCode: string): string => {
 
   return isUrlMissingLocale(url) ? `/${languageCode}${ensurePrefix(url, '/')}` : url
 }
+*/

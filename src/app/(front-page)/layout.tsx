@@ -1,3 +1,7 @@
+'use client'
+
+import { useEffect } from 'react'
+
 // MUI Imports
 import Button from '@mui/material/Button'
 
@@ -5,6 +9,9 @@ import Button from '@mui/material/Button'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // Type Imports
+
+import 'aos/dist/aos.css'
+
 import type { ChildrenType } from '@core/types'
 
 // Context Imports
@@ -16,8 +23,8 @@ import BlankLayout from '@layouts/BlankLayout'
 import FrontLayout from '@components/layout/front-pages'
 import ScrollToTop from '@core/components/scroll-to-top'
 
-// Util Imports
-import { getSystemMode } from '@core/utils/serverHelpers'
+const AOS = require('aos')
+
 
 // Style Imports
 import '@/app/globals.css'
@@ -25,14 +32,20 @@ import '@/app/globals.css'
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
 
+
 const Layout = ({ children }: ChildrenType) => {
-  // Vars
-  const systemMode = getSystemMode()
+  useEffect(() => {
+    AOS.init?.({
+      once: true,
+      duration: 700,
+      easing: 'ease-out-cubic',
+    })
+  })
 
   return (
 
         <Providers direction='ltr'>
-            <BlankLayout systemMode={systemMode}>
+            <BlankLayout >
               <IntersectionProvider>
                 <FrontLayout>
                   {children}

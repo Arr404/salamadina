@@ -1,11 +1,9 @@
 'use client'
 
-// MUI Imports
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import IconButton from '@mui/material/IconButton'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -15,7 +13,6 @@ import type { Mode } from '@core/types'
 
 // Component Imports
 import Link from '@components/Link'
-import Logo from '@components/layout/shared/Logo'
 import CustomTextField from '@core/components/mui/TextField'
 
 // Hooks Imports
@@ -30,8 +27,8 @@ import frontCommonStyles from '@views/styles.module.css'
 
 const Footer = ({ mode }: { mode: Mode }) => {
   // Vars
-  const footerImageLight = '/images/front-pages/footer-bg-light.png'
-  const footerImageDark = '/images/front-pages/footer-bg-dark.png'
+  const footerImageLight = '/images/footer-bg-light.png'
+  const footerImageDark = '/images/footer-bg-dark.png'
 
   // Hooks
   const dashboardImage = useImageVariant(mode, footerImageLight, footerImageDark)
@@ -44,12 +41,19 @@ const Footer = ({ mode }: { mode: Mode }) => {
           <Grid container rowSpacing={10} columnSpacing={12}>
             <Grid item xs={12} lg={5}>
               <div className='flex flex-col items-start gap-6'>
-                <Link href='/front-pages/landing-page'>
-                  <Logo color='var(--mui-palette-common-white)' />
+                <Link href="/landing">
+                  <img
+                    src="/images/logos.png"
+                    alt="Company Logo"
+                    width="10"
+                    height="5"
+                    className="w-auto h-[4rem] max-w-full"
+                    sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
+                  />
+
                 </Link>
-                <Typography color='white' className='md:max-is-[390px] opacity-[78]'>
-                  Most Powerful & Comprehensive 🤩 React NextJS Admin Template with Elegant Material Design & Unique
-                  Layouts.
+                <Typography color="white" className="md:max-is-[390px] opacity-[78]">
+                  Lorem Ipsum
                 </Typography>
                 <div className='flex items-end'>
                   <CustomTextField
@@ -89,13 +93,13 @@ const Footer = ({ mode }: { mode: Mode }) => {
               </Typography>
               <div className='flex flex-col gap-4'>
                 <Typography component={Link} href='/front-pages/pricing' color='white' className='opacity-[78]'>
-                  Pricing
+                  Umrah
                 </Typography>
                 <Link href='/front-pages/payment' className='flex items-center gap-[10px]'>
                   <Typography color='white' className='opacity-[78]'>
-                    Payment
+                    Hajj
                   </Typography>
-                  <Chip label='New' color='primary' size='small' />
+
                 </Link>
                 <Typography
                   component={Link}
@@ -103,64 +107,16 @@ const Footer = ({ mode }: { mode: Mode }) => {
                   color='white'
                   className='opacity-[78]'
                 >
-                  Maintenance
+                  Edutrip  <Chip label='New' color='primary' size='small' />
                 </Typography>
-                <Typography component={Link} href='/pages/misc/coming-soon' color='white' className='opacity-[78]'>
-                  Coming Soon
-                </Typography>
+
               </div>
             </Grid>
             <Grid item xs={12} sm={3} lg={2}>
-              <Typography color='white' className='font-medium mbe-6 opacity-[92]'>
-                Products
-              </Typography>
-              <div className='flex flex-col gap-4'>
-                <Typography component={Link} href='/front-pages/landing-page' color='white' className='opacity-[78]'>
-                  Page builder
-                </Typography>
-                <Typography component={Link} href='/front-pages/landing-page' color='white' className='opacity-[78]'>
-                  Admin Dashboards
-                </Typography>
-                <Typography component={Link} href='/front-pages/landing-page' color='white' className='opacity-[78]'>
-                  UI Kits
-                </Typography>
-                <Typography component={Link} href='/front-pages/landing-page' color='white' className='opacity-[78]'>
-                  Illustrations
-                </Typography>
-              </div>
+
             </Grid>
             <Grid item xs={12} sm={6} lg={3}>
-              <Typography color='white' className='font-medium mbe-6 opacity-[92]'>
-                Download our App
-              </Typography>
-              <div className='flex flex-col gap-4'>
-                <Link className='bg-[#282C3E] bs-[56px] is-[211px] rounded'>
-                  <div className='flex items-center pli-5 plb-[7px] gap-6'>
-                    <img src='/images/front-pages/apple-icon.png' alt='apple store' className='bs-[34px]' />
-                    <div className='flex flex-col items-start'>
-                      <Typography variant='body2' color='white' className='opacity-[75]'>
-                        Download on the
-                      </Typography>
-                      <Typography color='white' className='font-medium opacity-[92]'>
-                        App Store
-                      </Typography>
-                    </div>
-                  </div>
-                </Link>
-                <Link className='bg-[#282C3E] bs-[56px] is-[211px] rounded'>
-                  <div className='flex items-center pli-5 plb-[7px] gap-6'>
-                    <img src='/images/front-pages/google-play-icon.png' alt='Google play' className='bs-[34px]' />
-                    <div className='flex flex-col items-start'>
-                      <Typography variant='body2' color='white' className='opacity-[75]'>
-                        Download on the
-                      </Typography>
-                      <Typography color='white' className='font-medium opacity-[92]'>
-                        Google Play
-                      </Typography>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+
             </Grid>
           </Grid>
         </div>

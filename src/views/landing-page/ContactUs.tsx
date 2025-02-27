@@ -60,7 +60,7 @@ const ContactUs = () => {
                 <span className='relative z-[1] font-extrabold'>
                   Let&#39;s work
                   <img
-                    src='/images/front-pages/landing-page/bg-shape.png'
+                    src='/images/landing/bg-shape.png'
                     alt='bg-shape'
                     className='absolute block-end-0 z-[1] bs-[40%] is-[132%] -inline-start-[19%] block-start-[17px]'
                   />
@@ -76,13 +76,13 @@ const ContactUs = () => {
             <Grid item xs={12} md={6} lg={5}>
               <div className={classnames('border p-[10px] relative', styles.contactRadius)}>
                 <img
-                  src='/images/front-pages/landing-page/contact-border.png'
+                  src='/images/landing/contact-border.png'
                   className='absolute -block-start-[7%] -inline-start-[8%] max-is-full max-lg:hidden '
                   alt='contact-border'
                   width='180'
                 />
                 <img
-                  src='/images/front-pages/landing-page/customer-service.png'
+                  src='/images/landing/haji.jpg'
                   alt='customer-service'
                   className={classnames('is-full', styles.contactRadius)}
                 />

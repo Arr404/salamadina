@@ -1,9 +1,10 @@
+'use client'
+
 // MUI Imports
 import Button from '@mui/material/Button'
 
 // Type Imports
 import type { ChildrenType } from '@core/types'
-import type { Locale } from '@configs/i18n'
 
 // Layout Imports
 import LayoutWrapper from '@layouts/LayoutWrapper'
@@ -18,25 +19,34 @@ import Navbar from '@components/layout/vertical/Navbar'
 import VerticalFooter from '@components/layout/vertical/Footer'
 import HorizontalFooter from '@components/layout/horizontal/Footer'
 import ScrollToTop from '@core/components/scroll-to-top'
-import AuthGuard from '@/hocs/AuthGuard'
 
-// Config Imports
-import { i18n } from '@configs/i18n'
+
 
 // Util Imports
 import { getDictionary } from '@/utils/getDictionary'
 import { getMode, getSystemMode } from '@core/utils/serverHelpers'
 
-const Layout = async ({ children, params }: ChildrenType & { params: { lang: Locale } }) => {
+const Layout = async ({ children }: ChildrenType ) => {
+
+  const getLanguage = (): "en" | "ind" => {
+    if (typeof window !== "undefined") {
+      const lang = localStorage.getItem("I18N_LANGUAGE") as string | null;
+
+      return (lang === "en" || lang === "ind" ) ? lang : "en"; // Default to 'en'
+    }
+
+    return "en";
+  };
+
   // Vars
-  const direction = i18n.langDirection[params.lang]
-  const dictionary = await getDictionary(params.lang)
+  const direction = 'ltr'
+  const dictionary = await getDictionary(getLanguage())
   const mode = getMode()
   const systemMode = getSystemMode()
 
   return (
     <Providers direction={direction}>
-      <AuthGuard locale={params.lang}>
+    {/*  <AuthGuard locale={params.lang}>*/}
         <LayoutWrapper
           systemMode={systemMode}
           verticalLayout={
@@ -62,7 +72,7 @@ const Layout = async ({ children, params }: ChildrenType & { params: { lang: Loc
             <i className='tabler-arrow-up' />
           </Button>
         </ScrollToTop>
-      </AuthGuard>
+     {/* </AuthGuard>*/}
     </Providers>
   )
 }

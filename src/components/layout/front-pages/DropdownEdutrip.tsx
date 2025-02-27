@@ -56,15 +56,15 @@ type MenuWrapperProps = {
 const pageData = [
   {
     title: 'Edutrip',
-    href: '/Edutrip'
+    href: '/umrah'
   },
   {
     title: 'Edutrip',
-    href: '/Edutrip'
+    href: '/umrah'
   },
   {
     title: 'Edutrip',
-    href: '/Edutrip'
+    href: '/umrah'
   }
 ]
 
@@ -105,7 +105,7 @@ const MenuWrapper = (props: MenuWrapperProps) => {
   )
 }
 
-const DropdownUmroh = (props: Props) => {
+const DropdownEdutrip = (props: Props) => {
   // Props
   const { isBelowLgScreen, isDrawerOpen, setIsDrawerOpen } = props
 
@@ -194,8 +194,8 @@ const DropdownUmroh = (props: Props) => {
             pathname === '/front-pages/payment' ||
             pathname === '/front-pages/pricing' ||
             pathname === '/front-pages/checkout' ||
-            pathname === '/front-pages/help-center' ||
-            pathname === '/front-pages/help-center/article/how-to-add-product-in-cart'
+            pathname === '/front-pages/umrahumrah' ||
+            pathname === '/front-pages/umrahumrah/article/how-to-add-product-in-cart'
         })}
         {...(isBelowLgScreen
           ? {
@@ -209,7 +209,7 @@ const DropdownUmroh = (props: Props) => {
             ...getReferenceProps()
           })}
       >
-        <span>Edutrip</span>
+        <span>Halal Tour</span>
         <i
           className={classnames(
             {
@@ -235,7 +235,7 @@ const DropdownUmroh = (props: Props) => {
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-layout-grid' />
             </CustomAvatar>
-            <Typography variant='h6'>Page</Typography>
+            <Typography variant='h6'>Edutrip</Typography>
           </div>
           {pageData.map((page, index) => (
             <Link
@@ -301,4 +301,4 @@ const DropdownUmroh = (props: Props) => {
   )
 }
 
-export default DropdownUmroh
+export default DropdownEdutrip

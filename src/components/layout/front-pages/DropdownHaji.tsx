@@ -55,16 +55,12 @@ type MenuWrapperProps = {
 // Constants
 const pageData = [
   {
-    title: 'Haji',
-    href: '/Haji'
+    title: 'Haji Khusus Kuota',
+    href: '/umrah'
   },
   {
-    title: 'Haji',
-    href: '/Haji'
-  },
-  {
-    title: 'Haji',
-    href: '/Haji'
+    title: 'Haji Khusus non Kuota',
+    href: '/umrah'
   }
 ]
 
@@ -194,8 +190,8 @@ const DropdownUmroh = (props: Props) => {
             pathname === '/front-pages/payment' ||
             pathname === '/front-pages/pricing' ||
             pathname === '/front-pages/checkout' ||
-            pathname === '/front-pages/help-center' ||
-            pathname === '/front-pages/help-center/article/how-to-add-product-in-cart'
+            pathname === '/front-pages/umrah' ||
+            pathname === '/front-pages/umrah/article/how-to-add-product-in-cart'
         })}
         {...(isBelowLgScreen
           ? {
@@ -235,7 +231,7 @@ const DropdownUmroh = (props: Props) => {
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-layout-grid' />
             </CustomAvatar>
-            <Typography variant='h6'>Page</Typography>
+            <Typography variant='h6'>Haji</Typography>
           </div>
           {pageData.map((page, index) => (
             <Link

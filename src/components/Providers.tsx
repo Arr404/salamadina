@@ -1,5 +1,4 @@
 // Type Imports
-import { light } from '@mui/material/styles/createPalette'
 import ThemeProvider from '@components/theme'
 import type { ChildrenType,Direction } from '@core/types'
 
@@ -27,7 +26,7 @@ const Providers = (props: Props) => {
   return (
     <VerticalNavProvider>
       <SettingsProvider settingsCookie={settingsCookie}>
-        <ThemeProvider direction={"ltr"} systemMode={"light"}>
+        <ThemeProvider systemMode={"light"}>
           <ReduxProvider>{children}</ReduxProvider>
         </ThemeProvider>
       </SettingsProvider>

@@ -18,7 +18,6 @@ import CustomAvatar from '@core/components/mui/Avatar'
 import AppKeenSlider from '@/libs/styles/AppKeenSlider'
 
 // SVG Imports
-import HubSpot from '@assets/svg/front-pages/landing-page/HubSpot'
 import Pinterest from '@assets/svg/front-pages/landing-page/Pinterest'
 import Dribbble from '@assets/svg/front-pages/landing-page/Dribbble'
 import Airbnb from '@assets/svg/front-pages/landing-page/Airbnb'
@@ -32,85 +31,44 @@ import styles from './styles.module.css'
 // Data
 const data = [
   {
-    desc: "I've never used a theme as versatile and flexible as Vuexy. It's my go to for building dashboard sites on almost any project.",
+    desc: "The guidance we received throughout the pilgrimage was exceptional. We were well-informed and felt secure at all times.",
     svg: <Pinterest color='#ee7676' />,
     rating: 5,
     name: 'Eugenia Moore',
-    position: 'Founder of Pinterest',
+    position: '2025',
     avatarSrc: '/images/avatars/1.png'
   },
   {
-    desc: 'Materio is awesome, and I particularly enjoy knowing that if I get stuck on something.',
+    desc: "Highly professional and well-organized Umrah services. I will definitely travel with them again in the future.",
     svg: <Netflix color='#d34c4d' />,
     rating: 5,
     name: 'Tommy haffman',
-    position: 'Founder of Netflix',
+    position: '2025',
     avatarSrc: '/images/avatars/2.png'
   },
   {
-    desc: "This template is superior in so many ways. The code, the design, the regular updates, the support.. It's the whole package. Excellent Work.",
+    desc: "The guidance we received throughout the pilgrimage was exceptional. We were well-informed and felt secure at all times.",
     svg: <Airbnb color='#FF5A60' />,
     rating: 4,
     name: 'Eugenia Moore',
-    position: 'CTO of Airbnb',
+    position: '2025',
     avatarSrc: '/images/avatars/3.png'
   },
   {
-    desc: "All the requirements for developers have been taken into consideration, so I'm able to build any interface I want.",
+    desc: "The guidance we received throughout the pilgrimage was exceptional. We were well-informed and felt secure at all times.",
     svg: <Coinbase color='#0199ff' />,
     rating: 5,
     name: 'Sara Smith',
-    position: 'Founder of Coinbase',
+    position: '2025',
     avatarSrc: '/images/avatars/4.png'
   },
   {
-    desc: "I've never used a theme as versatile and flexible as Vuexy. It's my go to for building dashboard sites on almost any project.",
+    desc: "Highly professional and well-organized Umrah services. I will definitely travel with them again in the future.",
     svg: <Dribbble color='#ea4c89' />,
     rating: 5,
     name: 'Tommy haffman',
-    position: 'Founder of Dribble',
+    position: '2025',
     avatarSrc: '/images/avatars/5.png'
-  },
-  {
-    desc: "I've never used a theme as versatile and flexible as Vuexy. It's my go to for building dashboard sites on almost any project.",
-    svg: <Pinterest color='#ee7676' />,
-    rating: 5,
-    name: 'Eugenia Moore',
-    position: 'Founder of Pinterest',
-    avatarSrc: '/images/avatars/6.png',
-    color: '#2882C3'
-  },
-  {
-    desc: 'Materio is awesome, and I particularly enjoy knowing that if I get stuck on something.',
-    svg: <HubSpot color='#FF5C35' />,
-    rating: 5,
-    name: 'Tommy haffman',
-    position: 'Founder of HubSpot',
-    avatarSrc: '/images/avatars/7.png'
-  },
-  {
-    desc: "This template is superior in so many ways. The code, the design, the regular updates, the support.. It's the whole package. Excellent Work.",
-    svg: <Airbnb color='#FF5A60' />,
-    rating: 4,
-    name: 'Eugenia Moore',
-    position: 'CTO of Airbnb',
-    avatarSrc: '/images/avatars/8.png'
-  },
-  {
-    desc: "All the requirements for developers have been taken into consideration, so I'm able to build any interface I want.",
-    svg: <Coinbase color='#0199ff' />,
-    rating: 5,
-    name: 'Sara Smith',
-    position: 'Founder of Coinbase',
-    avatarSrc: '/images/avatars/9.png'
-  },
-  {
-    desc: 'Materio is awesome, and I particularly enjoy knowing that if I get stuck on something.',
-    svg: <Dribbble color='#ea4c89' />,
-    rating: 5,
-    name: 'Tommy haffman',
-    position: 'Founder of Dribbble',
-    avatarSrc: '/images/avatars/10.png'
   }
 ]
 
@@ -183,7 +141,7 @@ const CustomerReviews = () => {
               <span className='relative z-[1] font-extrabold'>
                 What people say
                 <img
-                  src='/images/front-pages/landing-page/bg-shape.png'
+                  src='/images/landing/bg-shape.png'
                   alt='bg-shape'
                   className='absolute block-end-0 z-[1] bs-[40%] is-[132%] inline-start-[-8%] block-start-[17px]'
                 />
@@ -208,7 +166,7 @@ const CustomerReviews = () => {
                   <Card elevation={8} className='flex items-start'>
                     <CardContent className='p-8 items-center mlb-auto'>
                       <div className='flex flex-col gap-4 items-start'>
-                        {item.svg}
+                        {/*{item.svg}*/}
                         <Typography>{item.desc}</Typography>
                         <Rating value={item.rating} readOnly />
                         <div className='flex items-center gap-x-3'>

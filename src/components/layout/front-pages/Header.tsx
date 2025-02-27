@@ -1,9 +1,9 @@
 'use client'
 
 // React Imports
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import type { Dispatch, SetStateAction} from 'react';
+import { useState } from 'react'
 
-import Image from "next/image";
 
 // Next Imports
 import Link from 'next/link'
@@ -54,45 +54,35 @@ const Header = ({ mode, setIsLoading }: { mode: Mode, setIsLoading: Dispatch<Set
             <div className='flex items-center gap-2 sm:gap-4'>
 
               <FrontMenu mode={mode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
-              <Link href='/landing'>
-                <Image
-                  src="/logo.png"
+              <Link href="/landing">
+                <img
+                  src="/images/logos.png"
                   alt="Company Logo"
-                  width={10}
-                  height={5}
+                  width="10"
+                  height="5"
+                  className="w-auto h-[3rem] max-w-full"
                   sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
-                  className="w-auto h-auto max-w-full"
-                  priority
-                  placeholder="blur"
-                  blurDataURL="/logo.png" // Uses the same image for placeholder blur effect
                 />
               </Link>
             </div>
           ) : (
-            <div className='flex items-center gap-10'>
-              <FrontMenu mode={mode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+            <div className="flex items-center gap-10">
+              <Link href='/landing'>
+
+                 <img
+                src="/images/logos.png"
+                alt="Company Logo"
+                width="10"
+                height="5"
+                className="w-auto h-[4rem] max-w-full"
+                sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
+              />
+              </Link>
 
             </div>
           )}
-          {isBelowLgScreen ? (
-            <></>
-          ) : (
-            <Link href='/landing'>
-              <Image
-                src="/logo.png"
-                alt="Company Logo"
-                width={10}
-                height={5}
-                sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
-                className="w-auto h-auto max-w-full"
-                priority
-                placeholder="blur"
-                blurDataURL="/logo.png" // Uses the same image for placeholder blur effect
-              />
-            </Link>
-          )}
-
-          <div className='flex items-center gap-2 sm:gap-4'>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <FrontMenu mode={mode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
             <LanguageDropdown setIsLoading={setIsLoading} />
             {isBelowLgScreen ? (
               <>

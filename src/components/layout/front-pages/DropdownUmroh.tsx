@@ -53,18 +53,29 @@ type MenuWrapperProps = {
 }
 
 // Constants
-const pageData = [
+const UmrahReguler = [
   {
-    title: 'Umrah',
-    href: '/Umrah'
+    title: 'Promo',
+    href: '/umrah'
   },
   {
-    title: 'Umrah',
-    href: '/Umrah'
+    title: 'Hemat',
+    href: '/umrah'
   },
   {
-    title: 'Umrah',
-    href: '/Umrah'
+    title: 'Premium',
+    href: '/umrah'
+  }
+]
+
+const UmrahPlus = [
+  {
+    title: 'Mesir',
+    href: '/umrah'
+  },
+  {
+    title: 'Turki',
+    href: '/umrah'
   }
 ]
 
@@ -194,8 +205,8 @@ const DropdownUmroh = (props: Props) => {
             pathname === '/front-pages/payment' ||
             pathname === '/front-pages/pricing' ||
             pathname === '/front-pages/checkout' ||
-            pathname === '/front-pages/help-center' ||
-            pathname === '/front-pages/help-center/article/how-to-add-product-in-cart'
+            pathname === '/front-pages/umrah' ||
+            pathname === '/front-pages/umrah/article/how-to-add-product-in-cart'
         })}
         {...(isBelowLgScreen
           ? {
@@ -235,9 +246,9 @@ const DropdownUmroh = (props: Props) => {
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-layout-grid' />
             </CustomAvatar>
-            <Typography variant='h6'>Page</Typography>
+            <Typography variant='h6'>Umrah Reguler</Typography>
           </div>
-          {pageData.map((page, index) => (
+          {UmrahReguler.map((page, index) => (
             <Link
               key={index}
               href={page.href}
@@ -251,14 +262,14 @@ const DropdownUmroh = (props: Props) => {
             </Link>
           ))}
         </div>
-        {/*<div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4'>
           <div className='flex gap-3 items-center'>
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-lock' />
             </CustomAvatar>
-            <Typography variant='h6'>Auth Demo</Typography>
+            <Typography variant='h6'>Umrah Plus Mancanegara</Typography>
           </div>
-          {authData.map((page, index) => (
+          {UmrahPlus.map((page, index) => (
             <Link
               key={index}
               href={'/pages/auth' + page.href}
@@ -270,7 +281,7 @@ const DropdownUmroh = (props: Props) => {
               <span>{page.title}</span>
             </Link>
           ))}
-        </div>*/}
+        </div>
        {/* <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-3'>
             <CustomAvatar variant='rounded' color='primary' skin='light'>
