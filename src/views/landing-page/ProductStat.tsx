@@ -29,10 +29,10 @@ type StatData = {
 }
 
 const videoList = [
-  { id: 'oAMNlzUCytM', title: 'Video 1' },
-  { id: 'sftPTw1_gbo', title: 'Video 2' },
-  { id: 'e3QGVtY99ek', title: 'Video 3' },
-  { id: 'oAMNlzUCytM', title: 'Video 4' }
+  { id: 'oAMNlzUCytM', title: 'Ustad Drs.H.M. Salim Bassawad. MM.Pd (Kasi Umrah & Haji Kabupaten Jombang) Jamaah Akhir Romadhon.' },
+  { id: 'sftPTw1_gbo', title: 'Testimoni Bapak Lely Irawan & Ibu Frista Jamaah Salamadina 11 Maret 2019' },
+  { id: 'e3QGVtY99ek', title: 'Bu Enik Khairul Ummah, M.Pd, Kepala Sekolah SD Muhammadiyah 1 Sidoarjo (Paket Turkey+Singapore+Umra)' },
+  { id: 'oAMNlzUCytM', title: 'Ustad Drs.H.M. Salim Bassawad. MM.Pd (Kasi Umrah & Haji Kabupaten Jombang) Jamaah Akhir Romadhon.' }
 ];
 
 // Data
@@ -116,7 +116,7 @@ const ProductStat = () => {
                   className="p-2 cursor-pointer hover:bg-gray-200 rounded flex items-center gap-2"
                   onClick={() => setCurrentVideo(video.id)}
                 >
-                  <img src={video.id} alt={video.title} className="w-20 h-12 rounded object-cover" />
+                  {/*<img src={video.id} alt={video.title} className="w-20 h-12 rounded object-cover" />*/}
                   <Typography className="font-medium text-sm md:text-base">{video.title}</Typography>
                 </div>
               ))}

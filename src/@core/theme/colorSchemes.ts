@@ -77,7 +77,7 @@ const colorSchemes = (skin: Skin): Theme['colorSchemes'] => {
           primary: `rgb(var(--mui-mainColorChannels-light) / 0.9)`,
           secondary: `rgb(var(--mui-mainColorChannels-light) / 0.7)`,
           disabled: `rgb(var(--mui-mainColorChannels-light) / 0.4)`,
-          primaryChannel: 'var(--mui-mainColorChannels-light)',
+          primaryChannel: '#811745',
           secondaryChannel: 'var(--mui-mainColorChannels-light)'
         },
         divider: `rgb(var(--mui-mainColorChannels-light) / 0.12)`,

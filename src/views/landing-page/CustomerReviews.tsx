@@ -1,4 +1,6 @@
 // MUI Imports
+import { useState } from 'react'
+
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -11,6 +13,8 @@ import { useKeenSlider } from 'keen-slider/react'
 import classnames from 'classnames'
 
 // Component Imports
+import { useSwipeable } from "react-swipeable";
+
 import CustomIconButton from '@core/components/mui/IconButton'
 import CustomAvatar from '@core/components/mui/Avatar'
 
@@ -27,6 +31,7 @@ import Netflix from '@assets/svg/front-pages/landing-page/Netflix'
 // Styles Imports
 import frontCommonStyles from '@views/styles.module.css'
 import styles from './styles.module.css'
+
 
 // Data
 const data = [
@@ -73,6 +78,17 @@ const data = [
 ]
 
 const CustomerReviews = () => {
+  const imagePaths = [
+    "afco.png", "bigpm.png", "bmtsrt.png", "bmtugt.png", "bnn.png",
+    "kspps.png", "lkms.png", "mimps.png", "pbs.png", "pens.png",
+    "pmc.png", "pp.png", "puj.png", "sas.png", "sdm9tu.png",
+    "sdm10ba.png", "sm1c.png", "sm1k.png", "sm1kr.png", "sm1pu.png",
+    "sm1s.png", "sm1t.png", "sm1w.png", "sm2k.png", "sm2kri.png",
+    "sm2sid.png", "sm2tu.png", "sm2w.png", "sm3wa.png", "sm4za.png",
+    "sm5por.png", "sm8tu.png", "sm11ran.png", "sm12t.png", "smk3m.png",
+    "wika.png"
+  ];
+
   // Hooks
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
     {
@@ -129,12 +145,24 @@ const CustomerReviews = () => {
     ]
   )
 
+  // Duplicate images for infinite scroll effect
+  const images = [...imagePaths, ...imagePaths];
+
+  const [isPaused, setIsPaused] = useState(false);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => setIsPaused(true),
+    onSwipedRight: () => setIsPaused(true),
+    onSwiped: () => setTimeout(() => setIsPaused(false), 2000), // Resume after 2s
+  });
+
   return (
     <section className={classnames('flex flex-col gap-8 plb-[100px] bg-backgroundDefault', styles.sectionStartRadius)}>
       <div
         className={classnames('flex max-md:flex-col max-sm:flex-wrap is-full gap-6', frontCommonStyles.layoutSpacing)}
       >
-        <div className='flex flex-col gap-1 bs-full justify-center items-center lg:items-start is-full md:is-[30%] mlb-auto sm:pbs-2'>
+        <div
+          className='flex flex-col gap-1 bs-full justify-center items-center lg:items-start is-full md:is-[30%] mlb-auto sm:pbs-2'>
           <Chip label='Real Customers Reviews' variant='tonal' color='primary' size='small' className='mbe-3' />
           <div className='flex flex-col gap-y-1 flex-wrap max-lg:text-center '>
             <Typography color='text.primary' variant='h4'>
@@ -190,12 +218,39 @@ const CustomerReviews = () => {
         </div>
       </div>
       <Divider />
-      <div className='flex flex-wrap items-center justify-center gap-x-16 gap-y-6 mli-3'>
-        <Airbnb color='var(--mui-palette-text-secondary)' />
-        <Netflix color='var(--mui-palette-text-secondary)' />
-        <Dribbble color='var(--mui-palette-text-secondary)' />
-        <Coinbase color='var(--mui-palette-text-secondary)' />
-        <Pinterest color='var(--mui-palette-text-secondary)' />
+      <div {...handlers} className="relative w-full overflow-hidden">
+        <div
+          className={`flex items-center gap-12 animate-scroll ${isPaused ? "paused" : ""}`}
+        >
+          {images.map((image, index) => (
+            <img
+              key={index}
+              src={`/images/clients/${image}`}
+              alt={image.replace(".png", "")}
+              className="h-24 w-auto object-contain"
+            />
+          ))}
+        </div>
+
+        {/* Tailwind animation */}
+        <style jsx>{`
+          @keyframes scroll {
+            from {
+              transform: translateX(0%);
+            }
+            to {
+              transform: translateX(-50%);
+            }
+          }
+
+          .animate-scroll {
+            animation: scroll 15s linear infinite;
+          }
+
+          .paused {
+            animation-play-state: paused;
+          }
+        `}</style>
       </div>
     </section>
   )

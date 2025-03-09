@@ -48,32 +48,25 @@ const Maps = () => {
   return (
     <section id='features' ref={ref} className='bg-backgroundPaper'>
       <div className={classnames('flex flex-col gap-12 pbs-12 pbe-[100px]', frontCommonStyles.layoutSpacing)}>
-        <div className='flex flex-col gap-y-4 items-center justify-center'>
-          <Chip size='small' variant='tonal' color='primary' label='Agents' />
+        <div className='flex flex-col gap-y-4 items-center '>
+          <Chip size='small' className="text-white bg-[#811745]" variant='tonal' color='primary' label='Agents' />
           <div className='flex flex-col items-center gap-y-1 justify-center flex-wrap'>
             <div className='flex items-center gap-x-2'>
-              <Typography color='text.primary' variant='h4' className='text-center'>
-                <span className='relative z-[1] font-extrabold'>
+              <Typography  variant='h4' className='text-center text-[#811745]'>
+                <span className='text-bold  relative z-[1] font-extrabold'>
                   All Agent
-                  <img
-                    src='/images/landing/bg-shape.png'
-                    alt='bg-shape'
-                    className='absolute block-end-0 z-[1] bs-[40%] is-[125%] sm:is-[132%] -inline-start-[13%] sm:inline-start-[-19%] block-start-[17px]'
-                  />
+
                 </span>{' '}
                 In Indonesia
               </Typography>
             </div>
-            <Typography className='text-center'>
+            <Typography className='text-center text-[#811745]'>
               Find one near you
             </Typography>
             <div className="mt-12 overflow-hidden">
               <IndonesiaMaps/>
             </div>
           </div>
-        </div>
-        <div>
-
         </div>
       </div>
     </section>

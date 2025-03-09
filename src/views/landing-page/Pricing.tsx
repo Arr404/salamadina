@@ -1,6 +1,4 @@
 
-// Next Imports
-import Link from 'next/link'
 
 // MUI Imports
 import Typography from '@mui/material/Typography'
@@ -13,10 +11,10 @@ import Button from '@mui/material/Button'
 // Third-party Imports
 import classnames from 'classnames'
 
-// Components Imports
-import CustomAvatar from '@core/components/mui/Avatar'
 
 // Styles Imports
+import { CardMedia, Divider, LinearProgress } from '@mui/material'
+
 import frontCommonStyles from '@views/styles.module.css'
 import styles from './styles.module.css'
 
@@ -174,6 +172,19 @@ const PricingPlan = () => {
     }
   }*/
 
+  const totalSeats = 100;
+  const seatsLeft = 25;
+  const progress = (seatsLeft / totalSeats) * 100;
+
+  const features = [
+    "Exclusive NFT Ownership",
+    "Lifetime Access to Community",
+    "Special Perks & Discounts",
+    "Priority on Future Drops",
+    "VIP Event Invitations",
+    "Early Access to New Features"
+  ];
+
   return (
     <section
       id='pricing-plans'
@@ -184,113 +195,96 @@ const PricingPlan = () => {
     >
       <div className={classnames('is-full', frontCommonStyles.layoutSpacing)}>
         <div className='flex flex-col gap-y-4 items-center justify-center mb-12'>
-          <Chip size='small' variant='tonal' color='primary' label='Pricing Plans' />
+          <Chip size='small' className="text-white bg-[#811745]" variant='tonal' color='primary' label='Salamadina Tours' />
           <div className='flex flex-col items-center gap-y-1 justify-center flex-wrap'>
             <div className='flex items-center gap-x-2'>
-              <Typography color='text.primary' variant='h4' className='text-center'>
-                <span className='relative z-[1] font-extrabold'>
-                  Tailored pricing plans
-                  <img
-                    src='/images/landing/bg-shape.png'
-                    alt='bg-shape'
-                    className='absolute block-end-0 z-[1] bs-[40%] is-[125%] sm:is-[132%] -inline-start-[10%] sm:inline-start-[-19%] block-start-[17px]'
-                  />
+              <Typography  variant='h4' className='text-center text-[#811745]'>
+                <span className='text-bold  relative z-[1] font-extrabold'>
+                 Product
+
                 </span>{' '}
-                designed for you
+                Experience
               </Typography>
             </div>
-            <Typography className='text-center'>
-              All plans include 40+ advanced tools and features to boost your product.
-              <br />
-              Choose the best plan to fit your needs.
-            </Typography>
+
           </div>
         </div>
 
         <Grid container spacing={6}>
           {pricingPlans.map((plan, index) => (
             <Grid item key={index} xs={12} lg={4}>
-              <Card
-                className={`${plan.current && "border-2"} shadow-xl ${
-                  index < 3
-                    ? "border-[var(--mui-palette-primary-main)] text-[var(--mui-palette-primary-main)]"
-                    : index < 6
-                      ? "border-[var(--mui-palette-secondary-main)] text-[var(--mui-palette-secondary-main)]"
-                      : "border-[var(--mui-palette-warning-main)] text-[var(--mui-palette-warning-main)]"
-                }`}
-              >
-                <CardContent className="flex flex-col gap-8 p-8">
-                  {/* Image */}
-                  <div className="is-full flex flex-col items-center gap-3">
-                    <img
-                      src={plan.img}
-                      alt={plan.img}
-                      height="88"
-                      width="86"
-                      className="text-center"
-                    />
-                  </div>
+              <Card className="max-w-sm rounded-xl shadow-xl p-5 relative overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
+                {/* Image */}
+                <CardMedia
+                  component="img"
+                  height="250"
+                  image="/images/gallery/28 januari/IMG-20250201-WA0057.jpg"
+                  alt="NFT"
+                  className="rounded-lg"
+                />
 
-                  {/* Title & Price */}
-                  <div className="flex flex-col items-center gap-y-[2px] relative">
-                    <Typography className="text-center" variant="h4">
-                      {plan.title}
-                    </Typography>
-                    <div className="flex items-baseline gap-x-1">
-                      <Typography
-                        variant="h2"
-                        className={`font-extrabold ${
-                          index < 3
-                            ? "text-[var(--mui-palette-primary-main)]"
-                            : index < 6
-                              ? "text-[var(--mui-palette-secondary-main)]"
-                              : "text-[var(--mui-palette-warning-main)]"
-                        }`}
-                      >
-                        Rp. {plan.price} Jt
-                      </Typography>
-                    </div>
-                  </div>
+                <CardContent>
+                  {/* Title */}
+                  <Typography variant="h4" className="mt-2 font-extrabold text-center tracking-wide">
+                    Umroh Hemat Plus Thaif
+                  </Typography>
+                  <Typography variant="h6" className="text-center text-gray-400 italic">Start jakarta 9 hari, By oman air</Typography>
+
+                  {/* Price */}
+                  <Typography variant="h3" className="font-bold text-center mt-2" style={{ color: "#811745" }}>
+                    Rp. 31.500.000
+                  </Typography>
+
+
+
+                  {/* Divider */}
+                  <Divider className="border-gray-300 my-4" />
 
                   {/* Features */}
-                  <div className="flex flex-col gap-3 mbs-3">
-                    {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-[12px]">
-                        <CustomAvatar
-                          color={
-                            index < 3
-                              ? "primary"
-                              : index < 6
-                                ? "secondary"
-                                : "warning"
-                          }
-                          skin={plan.current ? "filled" : "light"}
-                          size={20}
-                        >
-                          <i className="tabler-check text-sm" />
-                        </CustomAvatar>
-                        <Typography variant="h6">{feature}</Typography>
+                  <div className="flex flex-col gap-3 my-3">
+                    {features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-3">
+                        <span className={`w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold text-white ${index < 3 ? 'bg-blue-500' : index < 6 ? 'bg-green-500' : 'bg-yellow-500'}`}>✔</span>
+                        <Typography variant="h6" className="text-gray-400">{feature}</Typography>
                       </div>
                     ))}
                   </div>
 
-                  {/* Button */}
-                  <Button
-                    component={Link}
-                    href="/front-pages/payment"
-                    variant={plan.current ? "contained" : "tonal"}
-                    className={`${
-                      index < 3
-                        ? "bg-[var(--mui-palette-primary-main)] text-white"
-                        : index < 6
-                          ? "bg-[var(--mui-palette-secondary-main)] text-white"
-                          : "bg-[var(--mui-palette-warning-main)] text-black"
-                    }`}
-                  >
-                    Get Started
-                  </Button>
+                  <Divider className="border-gray-300 my-4" />
+                  {/* Seats Left */}
+                  <div className="mt-4 text-left">
+                    <Typography variant="h5" className="text-gray-800 font-bold mb-1">
+                      {seatsLeft} seats left!
+                    </Typography>
+                    <LinearProgress
+                      variant="determinate"
+                      value={progress}
+                      className="h-2 rounded-full"
+                      sx={{ backgroundColor: "#444", "& .MuiLinearProgress-bar": { backgroundColor: "#811745" } }}
+                    />
+                  </div>
+
+                  {/* Buy Now Button */}
+                  <div className="mt-6 flex justify-center">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "#811745",
+                        color: "white",
+                        fontWeight: "bold",
+                        fontSize: "1rem",
+                        padding: "10px 20px",
+                        borderRadius: "10px",
+                        textTransform: "none",
+                        "&:hover": { backgroundColor: "#d6005b" },
+                      }}
+                    >
+                      Detail Paket
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
+
 
             </Grid>
           ))}
