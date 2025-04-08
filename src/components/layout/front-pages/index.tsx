@@ -12,7 +12,7 @@ import Header from '@components/layout/front-pages/Header'
 
 // Util Imports
 import { frontLayoutClasses } from '@layouts/utils/layoutClasses'
-import Loading from '@views/loading/page'
+import LoadingWrapper from '@views/loading'
 
 const FrontLayout = ({ children }: ChildrenType) => {
   // Vars
@@ -24,7 +24,7 @@ const FrontLayout = ({ children }: ChildrenType) => {
       <Header mode={mode} setIsLoading={setIsLoading} />
       {isLoading ? (
         <>
-          <Loading/>
+          <LoadingWrapper/>
         </>
         ) : (
         <>

@@ -22,7 +22,7 @@ module.exports = {
       }
     ],
     'padding-line-between-statements': [
-      'error',
+      'warning',
       {
         blankLine: 'any',
         prev: 'export',

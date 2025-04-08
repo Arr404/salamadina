@@ -52,21 +52,28 @@ type MenuWrapperProps = {
   styles: CSSProperties
 }
 
-// Constants
-const pageData = [
+const menuData = [
   {
-    title: 'Edutrip',
-    href: '/umrah'
+    title: 'Corporate Trip',
+    icon: 'tabler-layout-grid',
+    items: [
+      { title: 'Bronze', href: '/halaltour/corporate/bronze' },
+      { title: 'Silver', href: '/halaltour/corporate/silver' },
+      { title: 'Premium', href: '/halaltour/corporate/premium' }
+    ]
   },
   {
-    title: 'Edutrip',
-    href: '/umrah'
+    title: 'Explore Mancanegara',
+    icon: 'tabler-globe',
+    items: [
+      { title: 'Bronze', href: '/halaltour/explore/bronze' },
+      { title: 'Silver', href: '/halaltour/explore/silver' },
+      { title: 'Premium', href: '/halaltour/explore/premium' }
+    ]
   },
-  {
-    title: 'Edutrip',
-    href: '/umrah'
-  }
+
 ]
+
 
 const MenuWrapper = (props: MenuWrapperProps) => {
   // Props
@@ -194,8 +201,8 @@ const DropdownEdutrip = (props: Props) => {
             pathname === '/front-pages/payment' ||
             pathname === '/front-pages/pricing' ||
             pathname === '/front-pages/checkout' ||
-            pathname === '/front-pages/umrahumrah' ||
-            pathname === '/front-pages/umrahumrah/article/how-to-add-product-in-cart'
+            pathname === '/front-pages/umrah' ||
+            pathname === '/front-pages/umrah/article/package-detail'
         })}
         {...(isBelowLgScreen
           ? {
@@ -231,25 +238,39 @@ const DropdownEdutrip = (props: Props) => {
         styles={styles}
       >
         <div className='flex flex-col gap-4'>
-          <div className='flex gap-3 items-center'>
-            <CustomAvatar variant='rounded' color='primary' skin='light'>
-              <i className='tabler-layout-grid' />
-            </CustomAvatar>
-            <Typography variant='h6'>Edutrip</Typography>
-          </div>
-          {pageData.map((page, index) => (
-            <Link
-              key={index}
-              href={page.href}
-              className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
-                'text-primary': pathname.includes( page.href)
-              })}
-              onClick={handleLinkClick}
-            >
-              <i className='tabler-circle text-[10px]' />
-              <span>{page.title}</span>
-            </Link>
+          {menuData.map((menu, menuIndex) => (
+            <div key={menuIndex} className='flex flex-col gap-2'>
+              <div className='flex gap-3 items-center'>
+                <CustomAvatar variant='rounded' color='primary' skin='light'>
+                  <i className={menu.icon} />
+                </CustomAvatar>
+                <Typography variant='h6'>{menu.title}</Typography>
+              </div>
+              {menu.items.map((item, itemIndex) => (
+                <Link
+                  key={itemIndex}
+                  href={item.href}
+                  className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
+                    'text-primary': pathname.includes(item.href)
+                  })}
+                  onClick={handleLinkClick}
+                >
+                  <i className='tabler-circle text-[10px]' />
+                  <span>{item.title}</span>
+                </Link>
+              ))}
+            </div>
           ))}
+          <div className='flex flex-col gap-2'>
+            <Link href='/halaltour/edutrip'>
+              <div className='flex gap-3 items-center'>
+                <CustomAvatar variant='rounded' color='primary' skin='light'>
+                  <i className={'tabler-school'} />
+                </CustomAvatar>
+                <Typography variant='h6'>{'Edu Trip'}</Typography>
+              </div>
+            </Link>
+          </div>
         </div>
         {/*<div className='flex flex-col gap-4'>
           <div className='flex gap-3 items-center'>

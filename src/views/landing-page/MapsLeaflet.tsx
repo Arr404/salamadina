@@ -95,7 +95,7 @@ const MapsLeaflet = () => {
           initial={{ opacity: 1, y: 0 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.5, y: 50 }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
-          className="map-wrapper col-span-1 md:col-span-2 xl:col-span-3"
+          className="map-wrapper z-0 col-span-1 md:col-span-2 xl:col-span-3"
         >
           <MapContainer
             ref={mapRef}

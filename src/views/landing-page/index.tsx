@@ -9,7 +9,7 @@ import HeroSection from './HeroSection'
 import UsefulFeature from './UsefulFeature'
 import CustomerReviews from './CustomerReviews'
 import Pricing from './Pricing'
-import ProductStat from './ProductStat'
+import Video from './Video'
 import Faqs from './Faqs'
 import GetStarted from './GetStarted'
 import ContactUs from './ContactUs'
@@ -39,10 +39,10 @@ const LandingPageWrapper = () => {
       <Gallery/>
       {/*<OurTeam />*/}
       <Pricing />
-      <ProductStat />
+      <Video />
       <Faqs />
       <GetStarted  />
-      <ContactUs />
+      {/*<ContactUs />*/}
     </div>
   )
 }

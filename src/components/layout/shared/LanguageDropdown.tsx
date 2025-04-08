@@ -45,8 +45,8 @@ const LanguageDropdown = ({setIsLoading} : {setIsLoading:any}) => {
         />
       </Dropdown.Trigger>
       <Dropdown.Content
-        placement="right-end"
-        className="absolute z-50 p-3 md:p-4 xl:p-5 ltr:text-left rtl:text-right bg-white rounded-md shadow-md
+        placement="top-start"
+        className="absolute translate-x-[-100px] z-50 p-3 md:p-4 xl:p-5 ltr:text-left rtl:text-right bg-white rounded-md shadow-md
              !top-4 dropdown-menu min-w-[10rem] md:min-w-[12rem] xl:min-w-[14rem]
              flex flex-col gap-3 xl:gap-4 dark:bg-zink-600"
         aria-labelledby="flagsDropdown"

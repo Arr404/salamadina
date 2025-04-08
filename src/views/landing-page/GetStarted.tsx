@@ -19,7 +19,7 @@ const GetStarted = () => {
   const getStartedImage = useImageVariant(mode, getStartedImageLight, getStartedImageDark)
 */
   return (
-    <section className='relative'>
+    <section id='getStarted' className='relative'>
      {/* <img
         src={getStartedImage}
         alt='background-image'

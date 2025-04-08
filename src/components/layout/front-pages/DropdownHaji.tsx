@@ -52,17 +52,26 @@ type MenuWrapperProps = {
   styles: CSSProperties
 }
 
-// Constants
-const pageData = [
-  {
-    title: 'Haji Khusus Kuota',
-    href: '/umrah'
-  },
-  {
-    title: 'Haji Khusus non Kuota',
-    href: '/umrah'
-  }
-]
+const menuData =
+  [
+    {
+      title: 'Haji Khusus Kuota',
+      icon: 'tabler-layout-grid',
+      items: [
+        { title: 'Gold', href: '/haji/kuota/gold' },
+        { title: 'Silver', href: '/haji/kuota/silver' },
+      ]
+    },
+    {
+      title: 'Haji Furoda/Mujamalah',
+      icon: 'tabler-layout-grid',
+      items: [
+        { title: 'Gold', href: '/haji/furoda/gold' },
+        { title: 'Silver', href: '/haji/furoda/silver' },
+      ]
+    }
+  ]
+
 
 const MenuWrapper = (props: MenuWrapperProps) => {
   // Props
@@ -101,7 +110,7 @@ const MenuWrapper = (props: MenuWrapperProps) => {
   )
 }
 
-const DropdownUmroh = (props: Props) => {
+const DropdownEdutrip = (props: Props) => {
   // Props
   const { isBelowLgScreen, isDrawerOpen, setIsDrawerOpen } = props
 
@@ -191,7 +200,7 @@ const DropdownUmroh = (props: Props) => {
             pathname === '/front-pages/pricing' ||
             pathname === '/front-pages/checkout' ||
             pathname === '/front-pages/umrah' ||
-            pathname === '/front-pages/umrah/article/how-to-add-product-in-cart'
+            pathname === '/front-pages/umrah/article/package-detail'
         })}
         {...(isBelowLgScreen
           ? {
@@ -227,25 +236,30 @@ const DropdownUmroh = (props: Props) => {
         styles={styles}
       >
         <div className='flex flex-col gap-4'>
-          <div className='flex gap-3 items-center'>
-            <CustomAvatar variant='rounded' color='primary' skin='light'>
-              <i className='tabler-layout-grid' />
-            </CustomAvatar>
-            <Typography variant='h6'>Haji</Typography>
-          </div>
-          {pageData.map((page, index) => (
-            <Link
-              key={index}
-              href={page.href}
-              className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
-                'text-primary': pathname.includes( page.href)
-              })}
-              onClick={handleLinkClick}
-            >
-              <i className='tabler-circle text-[10px]' />
-              <span>{page.title}</span>
-            </Link>
+          {menuData.map((menu, menuIndex) => (
+            <div key={menuIndex} className='flex flex-col gap-2'>
+              <div className='flex gap-3 items-center'>
+                <CustomAvatar variant='rounded' color='primary' skin='light'>
+                  <i className={menu.icon} />
+                </CustomAvatar>
+                <Typography variant='h6'>{menu.title}</Typography>
+              </div>
+              {menu.items.map((item, itemIndex) => (
+                <Link
+                  key={itemIndex}
+                  href={item.href}
+                  className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
+                    'text-primary': pathname.includes(item.href)
+                  })}
+                  onClick={handleLinkClick}
+                >
+                  <i className='tabler-circle text-[10px]' />
+                  <span>{item.title}</span>
+                </Link>
+              ))}
+            </div>
           ))}
+
         </div>
         {/*<div className='flex flex-col gap-4'>
           <div className='flex gap-3 items-center'>
@@ -267,7 +281,7 @@ const DropdownUmroh = (props: Props) => {
             </Link>
           ))}
         </div>*/}
-       {/* <div className='flex flex-col gap-4'>
+        {/* <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-3'>
             <CustomAvatar variant='rounded' color='primary' skin='light'>
               <i className='tabler-photo' />
@@ -297,4 +311,4 @@ const DropdownUmroh = (props: Props) => {
   )
 }
 
-export default DropdownUmroh
+export default DropdownEdutrip

@@ -27,9 +27,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const handleMouseMove = (event: MouseEvent) => {
-        console.log(event)
-
+      const handleMouseMove = () => {
         /*const rotateX = (window.innerHeight - 2 * event.clientY) / 100
         const rotateY = (window.innerWidth - 2 * event.clientX) / 100
 */

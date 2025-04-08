@@ -25,6 +25,10 @@ import { frontLayoutClasses } from '@layouts/utils/layoutClasses'
 import styles from './styles.module.css'
 import frontCommonStyles from '@views/styles.module.css'
 
+// Icons import
+import { Instagram as InstagramIcon, Facebook as FacebookIcon, Twitter as TwitterIcon, Youtube as YoutubeIcon, Phone as PhoneIcon } from 'lucide-react'
+
+
 const Footer = ({ mode }: { mode: Mode }) => {
   // Vars
   const footerImageLight = '/images/footer-bg-light.png'
@@ -35,55 +39,40 @@ const Footer = ({ mode }: { mode: Mode }) => {
 
   return (
     <footer className={frontLayoutClasses.footer}>
-      <div className='relative'>
-        <img src={dashboardImage} alt='footer bg' className='absolute inset-0 is-full bs-full object-cover -z-[1]' />
+      <div className='relative bg-[#811745]'>
         <div className={classnames('plb-12 text-white', frontCommonStyles.layoutSpacing)}>
           <Grid container rowSpacing={10} columnSpacing={12}>
             <Grid item xs={12} lg={5}>
               <div className='flex flex-col items-start gap-6'>
                 <Link href="/landing">
                   <img
-                    src="/images/logos.png"
+                    src="/images/logo-white.png"
                     alt="Company Logo"
-                    width="10"
                     height="5"
                     className="w-auto h-[4rem] max-w-full"
                     sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
                   />
-
                 </Link>
                 <Typography color="white" className="md:max-is-[390px] opacity-[78]">
-                  Lorem Ipsum
+                  Jalan Raya Ceweng Kalianyar, Dusun Krajan RT 001 RW 002, Bandung, Diwek, Jombang, Jawa Timur, Kode Pos 61471
+                  <br/>No. Telp: 0821-2911-1101
                 </Typography>
-                <div className='flex items-end'>
-                  <CustomTextField
-                    size='small'
-                    className={styles.inputBorder}
-                    label='Subscribe to newsletter'
-                    placeholder='Your email'
-                    sx={{
-                      '& .MuiInputBase-root': {
-                        borderStartEndRadius: '0 !important',
-                        borderEndEndRadius: '0 !important',
-                        '&:not(.Mui-focused)': {
-                          borderColor: 'rgb(var(--mui-mainColorChannels-dark) / 0.22)'
-                        },
-                        '&.MuiFilledInput-root:not(.Mui-focused):not(.Mui-disabled):hover': {
-                          borderColor: 'rgba(255 255 255 / 0.6) !important'
-                        }
-                      }
-                    }}
-                  />
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    sx={{
-                      borderStartStartRadius: 0,
-                      borderEndStartRadius: 0
-                    }}
-                  >
-                    Subscribe
-                  </Button>
+                <div className='flex gap-4 mt-4'>
+                  <Link href="https://instagram.com" className='text-white hover:text-gray-300'>
+                    <InstagramIcon fontSize="medium" />
+                  </Link>
+                  <Link href="https://facebook.com" className='text-white hover:text-gray-300'>
+                    <FacebookIcon fontSize="medium" />
+                  </Link>
+                  <Link href="https://twitter.com" className='text-white hover:text-gray-300'>
+                    <TwitterIcon fontSize="medium" />
+                  </Link>
+                  <Link href="https://youtube.com" className='text-white hover:text-gray-300'>
+                    <YoutubeIcon fontSize="medium" />
+                  </Link>
+                  <Link href="https://wa.me/6282129111101" className='text-white hover:text-gray-300'>
+                    <PhoneIcon fontSize="medium" />
+                  </Link>
                 </div>
               </div>
             </Grid>
@@ -92,50 +81,54 @@ const Footer = ({ mode }: { mode: Mode }) => {
                 Pages
               </Typography>
               <div className='flex flex-col gap-4'>
-                <Typography component={Link} href='/front-pages/pricing' color='white' className='opacity-[78]'>
+                <Typography component={Link} href='/umrah' color='white' className='opacity-[78]'>
                   Umrah
                 </Typography>
-                <Link href='/front-pages/payment' className='flex items-center gap-[10px]'>
+                <Link href='/haji' className='flex items-center gap-[10px]'>
                   <Typography color='white' className='opacity-[78]'>
                     Hajj
                   </Typography>
-
                 </Link>
                 <Typography
                   component={Link}
-                  href='/pages/misc/under-maintenance'
+                  href='/halaltour'
                   color='white'
                   className='opacity-[78]'
                 >
                   Edutrip  <Chip label='New' color='primary' size='small' />
                 </Typography>
-
               </div>
             </Grid>
             <Grid item xs={12} sm={3} lg={2}>
-
+              <Typography color='white' className='font-medium mbe-6 opacity-[92]'>
+                Company
+              </Typography>
+              <div className='flex flex-col gap-4'>
+                <Typography component={Link} href='/profile' color='white' className='opacity-[78]'>
+                  About Us
+                </Typography>
+                <Typography component={Link} href='/legalitas' color='white' className='opacity-[78]'>
+                  Legalitas
+                </Typography>
+              </div>
             </Grid>
             <Grid item xs={12} sm={6} lg={3}>
-
+              <Typography color='white' className='font-medium mbe-6 opacity-[92]'>
+                Support
+              </Typography>
+              <div className='flex flex-col gap-4'>
+                <Typography component={Link} href='#faq' color='white' className='opacity-[78]'>
+                  FAQ
+                </Typography>
+                <Typography component={Link} href='#getStarted' color='white' className='opacity-[78]'>
+                  Contact Us
+                </Typography>
+              </div>
             </Grid>
           </Grid>
         </div>
       </div>
-      <div className='bg-[#211B2C]'>
-        <div
-          className={classnames(
-            'flex flex-wrap items-center justify-center sm:justify-between gap-4 plb-[15px]',
-            frontCommonStyles.layoutSpacing
-          )}
-        >
-          <Typography className='text-white' variant='body2'>
 
-          </Typography>
-          <div className='flex gap-1.5 items-center'>
-
-          </div>
-        </div>
-      </div>
     </footer>
   )
 }

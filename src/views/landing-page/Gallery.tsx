@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react'
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -89,13 +89,15 @@ const Gallery = () => {
   const [lightbox, setLightbox] = useState<null | number>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [batch, setBatch] = useState<{ img: string; span: number }[]>([]);
+  const [count, setCount] = useState(0);
 
   const getRowSpan = () => (Math.random() > 0.5 ? 2 : 1);
 
   const calculateBatchSize = (startIndex: number) => {
     let count = 0;
     let rowsUsed = 0;
-    const batch: { img: string; span: number }[] = [];
+    const newBatch: { img: string; span: number }[] = [];
 
     for (let i = startIndex; i < images.length; i++) {
       if (rowsUsed >= 16) break;
@@ -104,14 +106,20 @@ const Gallery = () => {
       if (rowsUsed + span > 16) break;
 
       rowsUsed += span;
-      batch.push({ img: images[i], span });
+      newBatch.push({ img: images[i], span });
       count++;
     }
 
-    return { batch, count };
+    return { newBatch, count };
   };
 
-  const { batch, count } = calculateBatchSize(currentIndex);
+// Recalculate batch and count when currentIndex changes
+  useEffect(() => {
+    const { newBatch, count } = calculateBatchSize(currentIndex);
+
+    setBatch(newBatch);
+    setCount(count);
+  }, [currentIndex]);
 
   const nextImages = () => {
     setDirection(1);
@@ -122,6 +130,7 @@ const Gallery = () => {
     setDirection(-1);
     setCurrentIndex((prev) => (prev - count + images.length) % images.length);
   };
+
 
   return (
     <section id="gallery" ref={ref} className="relative h-[600px] flex items-center justify-center text-center overflow-hidden">
@@ -141,7 +150,7 @@ const Gallery = () => {
             transition={{ duration: 0.7, ease: "easeInOut" }}
           >
             {batch.map(({ img, span }, index) => (
-              <div key={index} className={`relative overflow-hidden shadow-md rounded-lg row-span-${span}`}>
+              <div key={index} className={`relative overflow-hidden shadow-md rounded-lg ${span === 2 ? "row-span-2": "row-span-1"}`}>
                 <img src={img} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" alt={`Image ${index}`} />
                 <button onClick={() => setLightbox(currentIndex + index)} className="absolute inset-0 flex items-center justify-center opacity-0 bg-black bg-opacity-50 text-white text-lg font-bold transition-opacity hover:opacity-100">
                   {img.split("/").pop()}

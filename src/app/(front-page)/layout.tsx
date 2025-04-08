@@ -31,6 +31,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+import WhatsAppButton from '@components/layout/front-pages/WhatsAppButton'
 
 
 const Layout = ({ children }: ChildrenType) => {
@@ -43,24 +44,24 @@ const Layout = ({ children }: ChildrenType) => {
   })
 
   return (
-
-        <Providers direction='ltr'>
-            <BlankLayout >
-              <IntersectionProvider>
-                <FrontLayout>
-                  {children}
-                  <ScrollToTop className='mui-fixed'>
-                    <Button
-                      variant='contained'
-                      className='is-10 bs-10 rounded-full p-0 min-is-0 flex items-center justify-center'
-                    >
-                      <i className='tabler-arrow-up' />
-                    </Button>
-                  </ScrollToTop>
-                </FrontLayout>
-              </IntersectionProvider>
-            </BlankLayout>
-        </Providers>
+    <Providers direction='ltr'>
+      <BlankLayout>
+        <IntersectionProvider>
+          <FrontLayout>
+            {children}
+            <ScrollToTop className='mui-fixed'>
+              <Button
+                variant='contained'
+                className='is-10 bs-10 bottom-10 rounded-full p-0 min-is-0 flex items-center justify-center'
+              >
+                <i className='tabler-arrow-up' />
+              </Button>
+            </ScrollToTop>
+            <WhatsAppButton />
+          </FrontLayout>
+        </IntersectionProvider>
+      </BlankLayout>
+    </Providers>
   )
 }
 

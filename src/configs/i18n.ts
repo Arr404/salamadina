@@ -2,12 +2,12 @@ import i18n from "i18next";
 
 import { initReactI18next } from "react-i18next";
 
-import translationENG from "../locales/en.json";
-import translationFR from "../locales/fr.json";
+import translationENG from "@/data/dictionaries/en.json";
+import translationInd from "@/data/dictionaries/id.json";
 
 const resources = {
   en: { translation: translationENG },
-  fr: { translation: translationFR },
+  id: { translation: translationInd },
 };
 
 // Safe access to localStorage

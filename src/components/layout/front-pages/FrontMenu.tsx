@@ -27,6 +27,7 @@ import { useIntersection } from '@/hooks/useIntersection'
 import DropdownUmroh from './DropdownUmroh'
 import DropdownHaji from '@components/layout/front-pages/DropdownHaji'
 import DropdownEdutrip from '@components/layout/front-pages/DropdownEdutrip'
+import DropdownProfile from '@components/layout/front-pages/DropdownProfile'
 
 type Props = {
   mode: Mode
@@ -123,7 +124,27 @@ const FrontMenu = (props: Props) => {
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
       />
-
+      <DropdownProfile
+        mode={mode}
+        isBelowLgScreen={isBelowLgScreen}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
+      <Typography
+        color='text.primary'
+        component={Link}
+        href='/gallery'
+        className={classnames('font-medium plb-3 pli-1.5 hover:text-primary', {
+          'text-primary':
+            !intersections.features &&
+            !intersections.team &&
+            !intersections.faq &&
+            !intersections['contact-us'] &&
+            pathname === '/gallery'
+        })}
+      >
+        Gallery
+      </Typography>
     </Wrapper>
   )
 }

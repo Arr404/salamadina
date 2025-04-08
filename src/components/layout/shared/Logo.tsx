@@ -71,7 +71,14 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
 
   return (
     <div className='flex items-center'>
-      <VuexyLogo className='text-2xl text-primary' />
+      <img
+        src="/images/logos.png"
+        alt="Company Logo"
+        height="5"
+        className="w-auto h-[3rem] max-w-full"
+
+        sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
+      />
       <LogoText
         color={color}
         ref={logoTextRef}

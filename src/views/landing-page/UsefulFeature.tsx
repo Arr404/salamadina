@@ -21,7 +21,7 @@ import frontCommonStyles from '@views/styles.module.css';
 const features = [
   {
     icon: <ShieldCheck className="w-8 h-8" />,
-    title: 'Legalitas Terjamin',
+    title: 'legalitas Terjamin',
     description: (
       <>
         Memiliki izin resmi,{' '}

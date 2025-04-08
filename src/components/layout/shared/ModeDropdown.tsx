@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // MUI Imports
 import Tooltip from '@mui/material/Tooltip'
@@ -23,6 +23,10 @@ const ModeDropdown = () => {
   // States
   const [open, setOpen] = useState(false)
   const [tooltipOpen, setTooltipOpen] = useState(false)
+
+  useEffect(() => {
+    updateSettings({ mode: 'light' })
+  }, [])
 
   // Refs
   const anchorRef = useRef<HTMLButtonElement>(null)
@@ -94,7 +98,7 @@ const ModeDropdown = () => {
                     <i className='tabler-sun' />
                     Light
                   </MenuItem>
-                  <MenuItem
+                  {/*<MenuItem
                     className='gap-3'
                     onClick={() => handleModeSwitch('dark')}
                     selected={settings.mode === 'dark'}
@@ -109,7 +113,7 @@ const ModeDropdown = () => {
                   >
                     <i className='tabler-device-laptop' />
                     System
-                  </MenuItem>
+                  </MenuItem>*/}
                 </MenuList>
               </ClickAwayListener>
             </Paper>

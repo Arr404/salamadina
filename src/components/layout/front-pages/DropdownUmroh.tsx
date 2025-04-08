@@ -200,111 +200,115 @@ const DropdownUmroh = (props: Props) => {
       <Typography
         component={Link}
         color='text.primary'
-        className={classnames('flex items-center gap-2 font-medium plb-3 pli-1.5 hover:text-primary', {
-          'text-primary':
-            pathname === '/front-pages/payment' ||
-            pathname === '/front-pages/pricing' ||
-            pathname === '/front-pages/checkout' ||
-            pathname === '/front-pages/umrah' ||
-            pathname === '/front-pages/umrah/article/how-to-add-product-in-cart'
-        })}
+        className={classnames(
+          'flex items-center gap-2 font-medium plb-3 pli-1.5 hover:text-primary',
+          { 'text-primary': ['/front-pages/payment', '/front-pages/pricing', '/front-pages/checkout', '/front-pages/umrah', '/front-pages/umrah/article/package-detail'].includes(pathname) }
+        )}
         {...(isBelowLgScreen
-          ? {
-            onClick: (e: MouseEvent) => {
-              e.preventDefault()
-              setIsOpen(!isOpen)
-            }
-          }
-          : {
-            ref: refs.setReference,
-            ...getReferenceProps()
-          })}
+          ? { onClick: (e : any) => { e.preventDefault(); setIsOpen(!isOpen); } }
+          : { ref: refs.setReference, ...getReferenceProps() })}
       >
         <span>Umroh</span>
-        <i
-          className={classnames(
-            {
-              'tabler-chevron-down': !isBelowLgScreen || (isBelowLgScreen && !isOpen),
-              'tabler-chevron-up': isBelowLgScreen && isOpen
-            },
-            'text-xl'
-          )}
-        />
+        <i className={classnames('text-xl', { 'tabler-chevron-down': !isBelowLgScreen || (isBelowLgScreen && !isOpen), 'tabler-chevron-up': isBelowLgScreen && isOpen })} />
       </Typography>
-      <MenuWrapper
-        refs={refs}
-        isBelowLgScreen={isBelowLgScreen}
-        isOpen={isOpen}
-        getFloatingProps={getFloatingProps}
-        top={y ? y - window.scrollY : 0}
-        floatingStyles={floatingStyles}
-        isMounted={isMounted}
-        styles={styles}
-      >
-        <div className='flex flex-col gap-4'>
-          <div className='flex gap-3 items-center'>
-            <CustomAvatar variant='rounded' color='primary' skin='light'>
-              <i className='tabler-layout-grid' />
-            </CustomAvatar>
-            <Typography variant='h6'>Umrah Reguler</Typography>
-          </div>
-          {UmrahReguler.map((page, index) => (
-            <Link
-              key={index}
-              href={page.href}
-              className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
-                'text-primary': pathname.includes( page.href)
-              })}
-              onClick={handleLinkClick}
-            >
-              <i className='tabler-circle text-[10px]' />
-              <span>{page.title}</span>
-            </Link>
+
+      <MenuWrapper {...{ refs, isBelowLgScreen, isOpen, getFloatingProps, top: y ? y - window.scrollY : 0, floatingStyles, isMounted, styles }}>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4'>
+          {[
+            {
+              title: 'Umrah Reguler',
+              href: '/umrah/reguler',
+              icon: 'tabler-layout-grid',
+              items: [
+                { title: 'Umrah Ceria', href: '/umrah/reguler/ceria' },
+                { title: 'Umrah Cermat', href: '/umrah/reguler/cermat' },
+                { title: 'Umrah Istimewa', href: '/umrah/reguler/istimewa' }
+              ]
+            },
+            {
+              title: 'Umrah Edu Trip',
+              href: '/umrah/edu-trip',
+              icon: 'tabler-school',
+              items: [
+                { title: 'Manajemen', href: '/umrah/edu-trip/manajemen' },
+                { title: 'Daurah Pelajar', href: '/umrah/edu-trip/daurah-pelajar' }
+              ]
+            },
+            {
+              title: 'Umrah Corporate',
+              href: '/umrah/corporate',
+              icon: 'tabler-building',
+              items: [
+                { title: 'Bronze', href: '/umrah/corporate/bronze' },
+                { title: 'Silver', href: '/umrah/corporate/silver' },
+                { title: 'Premium', href: '/umrah/corporate/premium' }
+              ]
+            },
+            {
+              title: 'Umrah Plus Mancanegara',
+              href: '/umrah/plus',
+              icon: 'tabler-world',
+              items: [
+                { title: 'Turki', href: '/umrah/plus/turki' },
+                { title: 'Mesir', href: '/umrah/plus/mesir' }
+              ]
+            },
+            {
+              title: 'Umrah Prestige',
+              href: '/umrah/prestige',
+              icon: 'tabler-crown',
+              items: [
+                { title: 'Gold', href: '/umrah/prestige/gold' },
+                { title: 'Platinum', href: '/umrah/prestige/platinum' }
+              ]
+            }
+          ].map((section, index) => (
+            <div key={index} className='space-y-1'>
+              <div className='flex flex-col gap-2'>
+                <div className='flex gap-3 items-center'>
+                  <CustomAvatar variant='rounded' color='primary' skin='light'>
+                    <i className={section.icon} />
+                  </CustomAvatar>
+                  <Link
+                    key={index}
+                    href={section.href}
+                    className={classnames('', { 'text-primary': pathname.includes(section.href) })}
+                    onClick={handleLinkClick}
+                  >
+                    <Typography variant='h6'>{section.title}</Typography>
+                  </Link>
+                </div>
+                {section.items.map((page, idx) => (
+                  <Link
+                    key={idx}
+                    href={page.href}
+                    className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary pl-10', { 'text-primary': pathname.includes(page.href) })}
+                    onClick={handleLinkClick}
+                  >
+                    <i className='tabler-circle text-[10px]' />
+                    <span>{page.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
+
+          {/* Standalone Links */}
+          <div className='space-y-6'>
+            {[{ title: 'Umrah Mandiri', icon: 'tabler-user', href: '/umrah/mandiri' }, { title: 'Umrah Custom/Community', icon: 'tabler-users', href: '/umrah/custom' }].map((link, index) => (
+              <Link key={index} href={link.href} className='flex items-center gap-3 hover:text-primary' onClick={handleLinkClick}>
+                <CustomAvatar variant='rounded' color='primary' skin='light'>
+                  <i className={link.icon} />
+                </CustomAvatar>
+                <Typography variant='h6'>{link.title}</Typography>
+              </Link>
+            ))}
+          </div>
         </div>
-        <div className='flex flex-col gap-4'>
-          <div className='flex gap-3 items-center'>
-            <CustomAvatar variant='rounded' color='primary' skin='light'>
-              <i className='tabler-lock' />
-            </CustomAvatar>
-            <Typography variant='h6'>Umrah Plus Mancanegara</Typography>
-          </div>
-          {UmrahPlus.map((page, index) => (
-            <Link
-              key={index}
-              href={'/pages/auth' + page.href}
-              target='_blank'
-              className='flex items-center gap-3 hover:text-primary'
-              onClick={handleLinkClick}
-            >
-              <i className='tabler-circle text-[10px]' />
-              <span>{page.title}</span>
-            </Link>
-          ))}
-        </div>
-       {/* <div className='flex flex-col gap-4'>
-          <div className='flex items-center gap-3'>
-            <CustomAvatar variant='rounded' color='primary' skin='light'>
-              <i className='tabler-photo' />
-            </CustomAvatar>
-            <Typography variant='h6'>Auth Demo</Typography>
-          </div>
-          {othersData.map((page, index) => (
-            <Link
-              key={index}
-              href={'/pages' + page.href}
-              target='_blank'
-              className='flex items-center gap-3 hover:text-primary'
-              onClick={handleLinkClick}
-            >
-              <i className='tabler-circle text-[10px]' />
-              <span>{page.title}</span>
-            </Link>
-          ))}
-        </div>*/}
+
         {!isBelowLgScreen && (
-          <div className='flex bg-backgroundDefault p-2 rounded'>
-            <img src='/images/landing/umrah.jpg' width='385' alt='dropdown image' className='rounded' />
+          <div className='flex bg-backgroundDefault p-2 rounded mt-4 max-w-xs mx-auto'>
+            <img src='/images/landing/umrah.jpg' alt='dropdown image' className='rounded w-full h-auto object-cover' />
           </div>
         )}
       </MenuWrapper>

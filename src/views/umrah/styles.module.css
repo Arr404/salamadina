@@ -1,0 +1,5 @@
+.bgImage {
+  background: url('/images/faq-header.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
