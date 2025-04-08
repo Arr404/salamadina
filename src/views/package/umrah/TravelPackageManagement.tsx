@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'
 import { umrahPackageservice, UmrahPackagesInput, UmrahPackage } from '@/services/package'
 import { uploadImage } from '@/services/cloudinary';
 import {
@@ -63,6 +64,7 @@ type FilterData = {
 };
 
 const UmrahPackagesManagement: React.FC = () => {
+  const router = useRouter();
   const [packages, setPackages] = useState<UmrahPackage[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -778,7 +780,10 @@ const UmrahPackagesManagement: React.FC = () => {
               </div>
 
               {/* Button */}
-              <button className="w-full bg-rose-800 text-white py-2 px-4 rounded-lg hover:bg-rose-700 transition-colors flex items-center justify-center gap-2">
+              <button
+                className="w-full bg-rose-800 text-white py-2 px-4 rounded-lg hover:bg-rose-700 transition-colors flex items-center justify-center gap-2"
+                onClick={() => router.push(`/package/umrah/${plan.id}`)}
+              >
                 <i className="tabler-user-search"></i>
                 Detail Paket
               </button>

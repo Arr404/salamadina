@@ -14,7 +14,7 @@ const PackageViewDetails = () => {
     nextManasik: '1 April 2025',
     image: 'path-to-image.jpg',
     airline: 'Saudi Airlines',
-    packageType: 'Quad (4 orang/kamar)'
+    peopleInRoom: 'Quad (4 orang/kamar)'
   };
   const includedItems = [
     "Tiket kelas ekonomi Saudi Airlines Surabaya-Madinah//Jeddah-Surabaya (PP)",
@@ -145,8 +145,8 @@ const PackageViewDetails = () => {
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-semibold text-gray-800">Jenis Paket</h3>
-              <p className="text-gray-600">{packageDetails.packageType}</p>
+              <h3 className="font-semibold text-gray-800">Jumlah dalam kamar</h3>
+              <p className="text-gray-600">{packageDetails.peopleInRoom}</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-lg">
               <h3 className="font-semibold text-gray-800">Maskapai</h3>

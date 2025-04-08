@@ -45,9 +45,21 @@ const IntegratedPackages = () => {
   const [selectedAirport, setSelectedAirport] = useState<string>('All Airports');
   const [selectedPackageType, setSelectedPackageType] = useState<string>('All Packages');
 
-  // Package types (hardcoded for now, could also be fetched)
-  const packageTypes = ['All Packages', 'UMRAH CERIA', 'UMRAH ISTIMEWA', 'UMRAH CERMAT'];
+  const [packageTypes, setPackageTypes] = useState<string[]>(['All Packages']);
 
+  useEffect(() => {
+    const uniqueSubTypes = Array.from(
+      new Set(packages.map(pkg => pkg.subType).filter(Boolean))
+    );
+    console.log(uniqueSubTypes);
+    if(!uniqueSubTypes){
+      setPackageTypes(['All Packages', ...uniqueSubTypes]);
+    }
+  }, [packages]);
+
+  useEffect(() => {
+    console.log('Current packageTypes:', packageTypes);
+  }, [packageTypes]);
   // Fetch packages and filters from Firebase
   useEffect(() => {
     const fetchData = async () => {
