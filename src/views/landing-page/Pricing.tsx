@@ -4,22 +4,29 @@ import { Grid, Typography, Chip } from '@mui/material'
 import classnames from 'classnames'
 import styles from './styles.module.css'
 import frontCommonStyles from '../styles.module.css'
+import { getLanguage } from '@/utils/getLanguage'
+import CategorySection from '@components/CategorySection'
 
 const PricingPlan = () => {
-  const [packages, setPackages] = useState<UmrahPackage[]>([])
+  const [packagesUmrah, setPackagesUmrah] = useState<UmrahPackage[]>([])
+  const [packagesHajj, setPackagesHajj] = useState<UmrahPackage[]>([])
+  const [packagesEdutrip, setPackagesEdutrip] = useState<UmrahPackage[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [imageUrl, setImageUrl] = useState('')
+  const [language, setLanguage] = useState<'en' | 'ind'>(getLanguage());
 
   // Fetch packages from Firebase
   useEffect(() => {
     const fetchPackages = async () => {
       try {
         setLoading(true)
-        const packagesData = await umrahPackageservice.getPackages()
-        // Limit to only 3 packages
-        const limitedPackages = packagesData.slice(0, 3)
-        setPackages(limitedPackages)
+        const packagesData = await umrahPackageservice.getPackages('umrahPackages')
+        const packagesDataHajj = await umrahPackageservice.getPackages('hajiPackages')
+        const packagesDataEdutrip = await umrahPackageservice.getPackages('halaltourpPackagess')
+        setPackagesUmrah( packagesData.slice(0, 3) )
+        setPackagesHajj( packagesDataHajj.slice(0, 3) )
+        setPackagesEdutrip( packagesDataEdutrip.slice(0, 3) )
       } catch (err) {
         setError('Failed to load packages. Please try again later.')
         console.error(err)
@@ -72,18 +79,81 @@ const PricingPlan = () => {
   )
 
   // Define categories with icons for the headers
-  const categories = [
-    {
-      id: 'umrah',
-      title: 'Umrah Packages',
-      description: 'Our most popular umrah packages with excellent value',
-      icon: (props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
-          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-        </svg>
-      )
-    }
-  ];
+  const categories =
+    language === 'en'
+      ? [
+        {
+          id: 'umrah',
+          title: 'Umrah Packages',
+          description: 'Our most popular umrah packages with excellent value',
+          icon: (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+            </svg>
+          )
+        },
+        {
+          id: 'hajj',
+          title: 'Hajj Packages',
+          description: 'Experience a fulfilling pilgrimage with our comprehensive Hajj packages',
+          icon: (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+              {/* Simplistic mosque icon */}
+              <path d="M12 2L2 10v2h20v-2L12 2z" />
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8H4z" />
+            </svg>
+          )
+        },
+        {
+          id: 'edutrip',
+          title: 'EduTrip Packages',
+          description: 'Combine education and adventure with our specialized EduTrip packages',
+          icon: (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+              {/* Simplistic book icon */}
+              <path d="M4 4h16v16H4V4z" opacity="0.3" />
+              <path d="M20 2H8a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2zm0 18H8V4h12v16z" />
+            </svg>
+          )
+        }
+      ]
+      : [
+        {
+          id: 'umrah',
+          title: 'Paket Umrah',
+          description: 'Paket umrah paling populer dengan nilai luar biasa',
+          icon: (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+            </svg>
+          )
+        },
+        {
+          id: 'hajj',
+          title: 'Paket Haji',
+          description: 'Raih pengalaman ibadah haji yang mendalam dengan paket haji komprehensif kami',
+          icon: (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+              {/* Simplistic mosque icon */}
+              <path d="M12 2L2 10v2h20v-2L12 2z" />
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8H4z" />
+            </svg>
+          )
+        },
+        {
+          id: 'edutrip',
+          title: 'Paket EduTrip',
+          description: 'Gabungkan pendidikan dengan petualangan melalui paket EduTrip kami yang spesial',
+          icon: (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+              {/* Simplistic book icon */}
+              <path d="M4 4h16v16H4V4z" opacity="0.3" />
+              <path d="M20 2H8a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2zm0 18H8V4h12v16z" />
+            </svg>
+          )
+        }
+      ];
+
 
   if (loading) {
     return (
@@ -125,98 +195,9 @@ const PricingPlan = () => {
         </div>
 
         <Grid container spacing={6} justifyContent="center" alignItems="stretch">
-          {/* Category Header */}
-          <Grid item xs={12} justifyContent="center" alignItems="center">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center">
-                <div className="h-px w-8 bg-gray-300"></div>
-                {categories[0].icon({ className: "w-6 h-6 mx-3 text-[#811745]" })}
-                <div className="h-px w-8 bg-gray-300"></div>
-              </div>
-              <h3 className="text-xl font-bold text-[#811745] mt-2">{categories[0].title}</h3>
-              <p className="text-sm text-gray-500 mt-1">{categories[0].description}</p>
-            </div>
-          </Grid>
-
-          {/* Packages */}
-          {packages.map((plan) => (
-            <Grid item xs={12} md={6} lg={4} key={plan.id}>
-              <div className="bg-white h-full rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-transform duration-300 hover:scale-105">
-                {/* Card Image */}
-                <div className="relative h-48 bg-gray-200">
-                  <img className="h-full w-full object-cover" src={plan.imageUrl || "/api/placeholder/400/320"} alt="package" />
-                </div>
-
-                <div className="p-6">
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {plan.packageType && renderTag(plan.packageType, true)}
-                    {plan.subType && renderTag(plan.subType)}
-                    {plan.tags?.filter(tag =>
-                      tag !== plan.packageType &&
-                      tag !== plan.subType
-                    ).map(tag => (
-                      <span key={tag} className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-center mb-2">{plan.title}</h3>
-                  <p className="text-gray-500 text-center italic mb-4">{plan.subtitle}</p>
-
-                  {/* Price */}
-                  <p className="text-2xl font-bold text-center text-rose-800 mb-6">
-                    {formatPrice(plan.price)}
-                  </p>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-200 my-4"></div>
-
-                  {/* Features */}
-                  <div className="space-y-3">
-                    {plan.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        {feature.icon === '' ? (
-                          <span
-                            className={`w-5 h-5 flex items-center justify-center rounded-full text-white ${
-                              idx < 3 ? 'bg-blue-500' : idx < 6 ? 'bg-green-500' : 'bg-yellow-500'
-                            }`}
-                          >
-                            ✓
-                          </span>
-                        ) : (
-                          <i className={`tabler-${feature.icon} text-blue-600 text-lg`} />
-                        )}
-                        <span className="text-gray-600">{feature.label}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-200 my-4"></div>
-
-                  {/* Seats */}
-                  <div className="mb-6">
-                    <p className="font-bold mb-2">{plan.seatsLeft} seats left!</p>
-                    <div className="h-2 bg-rose-100 rounded-full">
-                      <div
-                        className="h-full bg-rose-800 rounded-full"
-                        style={{ width: `${(plan.seatsLeft/plan.totalSeats) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Button */}
-                  <button className="w-full bg-rose-800 text-white py-2 px-4 rounded-lg hover:bg-rose-700 transition-colors flex items-center justify-center gap-2">
-                    <i className="tabler-user-search"></i>
-                    Detail Paket
-                  </button>
-                </div>
-              </div>
-            </Grid>
-          ))}
+          <CategorySection category={categories[0]} packages={packagesUmrah}/>
+          <CategorySection category={categories[1]} packages={packagesHajj}/>
+          <CategorySection category={categories[2]} packages={packagesEdutrip}/>
         </Grid>
       </div>
     </section>

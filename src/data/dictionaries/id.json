@@ -31,5 +31,8 @@
     "settings": "Pengaturan",
     "profile": "Profil",
     "logout": "Keluar"
+  },
+  "package": {
+    "detail": "Detail Paket"
   }
 }

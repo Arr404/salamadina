@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios from 'axios'
+import app from './init';
+import { addDoc, collection, getFirestore, Timestamp } from 'firebase/firestore'
 
 interface CloudinaryUploadResponse {
   public_id: string;
@@ -59,6 +61,14 @@ export const uploadImage = async (
     if (!data.secure_url || !data.public_id) {
       throw new Error("Incomplete Cloudinary response");
     }
+
+    // Save the uploaded image data to Firestore so you can use fetchCloudinaryImages later.
+    const db = getFirestore(app);
+    await addDoc(collection(db, "cloudinaryImages"), {
+      secure_url: data.secure_url,
+      public_id: data.public_id,
+      createdAt: Timestamp.now()
+    });
 
     return data;
   } catch (error) {

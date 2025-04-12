@@ -54,7 +54,7 @@ const steps = [
   {
     icon: 'tabler-file-analytics',
     title: 'Account Details',
-    subtitle: 'Enter your account [packageId]'
+    subtitle: 'Enter your account details'
   },
   {
     icon: 'tabler-user',

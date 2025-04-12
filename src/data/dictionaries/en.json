@@ -128,5 +128,8 @@
     "menuLevel2": "Menu Level 2",
     "menuLevel3": "Menu Level 3",
     "disabledMenu": "Disabled Menu"
+  },
+  "package": {
+    "detail": "Package Details"
   }
 }

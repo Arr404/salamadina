@@ -7,7 +7,7 @@ const FaqsData = [
     id: 'panel1',
     categories: ['packages', 'pricing', 'services'],
     question: 'What is included in your Hajj and Umrah packages?',
-    answer: 'Our packages typically include flights, accommodation near Haram, transportation, visa processing, guided tours, and meals. Specific inclusions may vary by package, so please check the [packageId] for your selected plan.'
+    answer: 'Our packages typically include flights, accommodation near Haram, transportation, visa processing, guided tours, and meals. Specific inclusions may vary by package, so please check the details for your selected plan.'
   },
   {
     id: 'panel2',

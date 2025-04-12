@@ -28,7 +28,7 @@ const UmrahWrapper = () => {
   return (
     <>
       <PackageHeader />
-      <PackageFilter/>
+      <PackageFilter tipePaket={'umrahPackages'}/>
     </>
   )
 }

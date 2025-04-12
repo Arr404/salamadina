@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Typography, Chip } from '@mui/material';
+import { Typography, Chip, Grid } from '@mui/material'
 import { Search, ChevronDown } from 'lucide-react';
 import { umrahPackageservice, UmrahPackage } from '@/services/package';
 import { fetchFilters } from '@/services/dynamicFilter'
+import PlanCard from '@components/PlanCard'
 
 // Define interfaces for filters
 interface Promo {
@@ -31,7 +32,7 @@ interface DropdownProps<T> {
 }
 
 // Main component that integrates PackageFilter with PricingPlan
-const IntegratedPackages = () => {
+const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
   // State for packages
   const [packages, setPackages] = useState<UmrahPackage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,15 +52,11 @@ const IntegratedPackages = () => {
     const uniqueSubTypes = Array.from(
       new Set(packages.map(pkg => pkg.subType).filter(Boolean))
     );
-    console.log(uniqueSubTypes);
     if(!uniqueSubTypes){
       setPackageTypes(['All Packages', ...uniqueSubTypes]);
     }
   }, [packages]);
 
-  useEffect(() => {
-    console.log('Current packageTypes:', packageTypes);
-  }, [packageTypes]);
   // Fetch packages and filters from Firebase
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +65,7 @@ const IntegratedPackages = () => {
 
         // Fetch packages and filters in parallel
         const [packagesData, filtersData] = await Promise.all([
-          umrahPackageservice.getPackages(),
+          umrahPackageservice.getPackages(tipePaket),
           fetchFilters()
         ]);
 
@@ -245,88 +242,16 @@ const IntegratedPackages = () => {
         </div>
 
         {/* Package Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Grid container spacing={6} justifyContent="center" alignItems="stretch">
+
           {filteredPackages.length > 0 ? (
             filteredPackages.map((plan) => (
-              <div key={plan.id} className="bg-white h-full rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-transform duration-300 hover:scale-105">
-                {/* Card Image */}
-                <div className="relative h-48 bg-gray-200">
-                  <img className="h-full w-full object-cover" src={plan.imageUrl || imageUrl || "/api/placeholder/400/320"} alt="package" />
-                </div>
-
-                <div className="p-6">
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {plan.packageType && renderTag(plan.packageType, true)}
-                    {plan.subType && renderTag(plan.subType)}
-                    {plan.tags?.filter(tag =>
-                      tag !== plan.packageType &&
-                      tag !== plan.subType
-                    ).map(tag => (
-                      <span key={tag} className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-center mb-2">{plan.title}</h3>
-                  <p className="text-gray-500 text-center italic mb-4">{plan.subtitle}</p>
-
-                  {/* Price */}
-                  <p className="text-2xl font-bold text-center text-rose-800 mb-6">
-                    {formatPrice(plan.price)}
-                  </p>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-200 my-4"></div>
-
-                  {/* Features */}
-                  <div className="space-y-3">
-                    {plan.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        {feature.icon === '' ? (
-                          <span
-                            className={`w-5 h-5 flex items-center justify-center rounded-full text-white ${
-                              idx < 3 ? 'bg-blue-500' : idx < 6 ? 'bg-green-500' : 'bg-yellow-500'
-                            }`}
-                          >
-                            ✓
-                          </span>
-                        ) : (
-                          <i className={`tabler-${feature.icon} text-blue-600 text-lg`} />
-                        )}
-                        <span className="text-gray-600">{feature.label}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-200 my-4"></div>
-
-                  {/* Seats */}
-                  <div className="mb-6">
-                    <p className="font-bold mb-2">{plan.seatsLeft} seats left!</p>
-                    <div className="h-2 bg-rose-100 rounded-full">
-                      <div
-                        className="h-full bg-rose-800 rounded-full"
-                        style={{ width: `${(plan.seatsLeft/plan.totalSeats) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Button */}
-                  <button className="w-full bg-rose-800 text-white py-2 px-4 rounded-lg hover:bg-rose-700 transition-colors flex items-center justify-center gap-2">
-                    <i className="tabler-user-search"></i>
-                    Detail Paket
-                  </button>
-                </div>
-              </div>
+              <PlanCard plan={plan}/>
             ))
           ) : (
             <div className="col-span-3 text-center py-12 text-gray-500 text-lg">No packages found matching your criteria</div>
           )}
-        </div>
+        </Grid>
       </div>
     </div>
   );
