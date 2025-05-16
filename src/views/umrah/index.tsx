@@ -10,7 +10,7 @@ import { useSettings } from '@core/hooks/useSettings'
 import PackageFilter from '@views/umrah/PackageFilter'
 
 
-const UmrahWrapper = () => {
+const UmrahWrapper = ({selectedPackageTypeProps}:{selectedPackageTypeProps?:string}) => {
 /*  // States
   const [searchValue, setSearchValue] = useState('')*/
 
@@ -28,7 +28,7 @@ const UmrahWrapper = () => {
   return (
     <>
       <PackageHeader />
-      <PackageFilter tipePaket={'umrahPackages'}/>
+      <PackageFilter tipePaket={'umrahPackages'} selectedPackageTypeProps={selectedPackageTypeProps}/>
     </>
   )
 }

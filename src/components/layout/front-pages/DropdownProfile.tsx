@@ -233,7 +233,7 @@ const DropdownProfile = (props: Props) => {
                 key={menuIndex}
                 href={menu.href}
                 className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
-                  'text-primary': pathname.includes(menu.href)
+                  'text-primary': pathname?.includes(menu.href)
                 })}
                 onClick={handleLinkClick}
               >

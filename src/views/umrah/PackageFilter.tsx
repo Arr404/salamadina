@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode } from 'react';
 import { Typography, Chip, Grid } from '@mui/material'
-import { Search, ChevronDown } from 'lucide-react';
-import { umrahPackageservice, UmrahPackage } from '@/services/package';
+import { Search, ChevronDown } from 'lucide-react'
+import { umrahPackageservice, UmrahPackage } from '@/services/package'
 import { fetchFilters } from '@/services/dynamicFilter'
 import PlanCard from '@components/PlanCard'
 
@@ -32,96 +32,97 @@ interface DropdownProps<T> {
 }
 
 // Main component that integrates PackageFilter with PricingPlan
-const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
+const IntegratedPackages = ({ tipePaket, selectedPackageTypeProps }: {
+  tipePaket: string,
+  selectedPackageTypeProps?: string
+}) => {
   // State for packages
-  const [packages, setPackages] = useState<UmrahPackage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState("");
+  const [packages, setPackages] = useState<UmrahPackage[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState('')
 
   // State for filters
-  const [filters, setFilters] = useState<Filters | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPromo, setSelectedPromo] = useState<string>('All Promos');
-  const [selectedAirport, setSelectedAirport] = useState<string>('All Airports');
-  const [selectedPackageType, setSelectedPackageType] = useState<string>('All Packages');
+  const [filters, setFilters] = useState<Filters | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedPromo, setSelectedPromo] = useState<string>('All Promos')
+  const [selectedAirport, setSelectedAirport] = useState<string>('All Airports')
+  const [selectedPackageType, setSelectedPackageType] = useState<string>(selectedPackageTypeProps ? selectedPackageTypeProps : 'All Packages')
 
-  const [packageTypes, setPackageTypes] = useState<string[]>(['All Packages']);
+  const [packageTypes, setPackageTypes] = useState<string[]>(['All Packages'])
 
   useEffect(() => {
     const uniqueSubTypes = Array.from(
       new Set(packages.map(pkg => pkg.subType).filter(Boolean))
-    );
-    if(!uniqueSubTypes){
-      setPackageTypes(['All Packages', ...uniqueSubTypes]);
-    }
-  }, [packages]);
+    ) as string[]
+    setPackageTypes(['All Packages', ...uniqueSubTypes])
+  }, [packages])
 
   // Fetch packages and filters from Firebase
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        setLoading(true)
 
         // Fetch packages and filters in parallel
         const [packagesData, filtersData] = await Promise.all([
           umrahPackageservice.getPackages(tipePaket),
           fetchFilters()
-        ]);
+        ])
 
-        setPackages(packagesData);
-        setFilters(filtersData);
+        setPackages(packagesData)
+        setFilters(filtersData)
       } catch (err) {
-        setError("Failed to load data. Please try again later.");
-        console.error(err);
+        setError('Failed to load data. Please try again later.')
+        console.error(err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   // Cloudinary setup
   useEffect(() => {
-    const cloudinaryUrl = process.env.NEXT_PUBLIC_CLOUDINARY_URL;
+    const cloudinaryUrl = process.env.NEXT_PUBLIC_CLOUDINARY_URL
 
     if (!cloudinaryUrl) {
-      console.error("CLOUDINARY_URL is not defined in environment variables");
-      return;
+      console.error('CLOUDINARY_URL is not defined in environment variables')
+      return
     }
 
-    const cloudNameMatch = cloudinaryUrl.match(/@([a-z0-9-]+)/i);
-    const cloudName = cloudNameMatch ? cloudNameMatch[1] : null;
+    const cloudNameMatch = cloudinaryUrl.match(/@([a-z0-9-]+)/i)
+    const cloudName = cloudNameMatch ? cloudNameMatch[1] : null
 
     if (cloudName) {
-      const url = `https://res.cloudinary.com/${cloudName}/image/upload/salamadina/IMG-20250201-WA0057_qwru42`;
-      setImageUrl(url);
+      const url = `https://res.cloudinary.com/${cloudName}/image/upload/salamadina/IMG-20250201-WA0057_qwru42`
+      setImageUrl(url)
     }
-  }, []);
+  }, [])
 
   // Filter packages based on selected filters
   const filteredPackages = packages.filter(pkg => {
     const matchesSearch = pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (pkg.subtitle && pkg.subtitle.toLowerCase().includes(searchTerm.toLowerCase()));
+      (pkg.subtitle && pkg.subtitle.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesPromo = selectedPromo === 'All Promos' ||
       (pkg.tags && pkg.tags.some(tag => {
-        const promoMatch = filters?.promos.find(p => p.name === tag);
-        return promoMatch && promoMatch.name === selectedPromo;
-      }));
+        const promoMatch = filters?.promos.find(p => p.name === tag)
+        return promoMatch && promoMatch.name === selectedPromo
+      }))
 
     const matchesAirport = selectedAirport === 'All Airports' ||
       (pkg.tags && pkg.tags.some(tag => {
-        const airportMatch = filters?.airports.find(a => `${a.code}` === tag);
-        return airportMatch && `${airportMatch.code} (${airportMatch.name})` === selectedAirport;
-      }));
+        const airportMatch = filters?.airports.find(a => `${a.code}` === tag)
+        return airportMatch && `${airportMatch.code} (${airportMatch.name})` === selectedAirport
+      }))
 
     const matchesPackageType = selectedPackageType === 'All Packages' ||
-      pkg?.subType?.toLowerCase() === selectedPackageType.toLowerCase();
+      pkg?.subType?.toLowerCase() === selectedPackageType.toLowerCase()
 
-    return matchesSearch && matchesPromo && matchesAirport && matchesPackageType;
-  });
+    return matchesSearch && matchesPromo && matchesAirport && matchesPackageType
+  })
 
   // Helper function to format price
   const formatPrice = (price: number) => {
@@ -129,8 +130,8 @@ const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0
-    }).format(price);
-  };
+    }).format(price)
+  }
 
   // Helper function to render tags
   const renderTag = (tag: string, isPrimary = false) => (
@@ -143,14 +144,14 @@ const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
     >
       {tag}
     </span>
-  );
+  )
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <p>Loading packages and filters...</p>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -158,7 +159,7 @@ const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
       <div className="flex justify-center items-center h-64">
         <p className="text-red-500">{error}</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -198,7 +199,9 @@ const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                <ChevronDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                  size={20} />
               </div>
             </div>
 
@@ -217,7 +220,9 @@ const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                <ChevronDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                  size={20} />
               </div>
             </div>
 
@@ -229,7 +234,7 @@ const IntegratedPackages = ({tipePaket}: {tipePaket : string}) => {
                   onChange={(e) => setSelectedPackageType(e.target.value)}
                   className="w-full px-4 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
                 >
-                  {packageTypes.map(type => (
+                  {packageTypes.map((type) => (
                     <option key={type} value={type}>
                       {type}
                     </option>

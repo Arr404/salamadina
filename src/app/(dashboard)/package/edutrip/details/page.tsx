@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 export default function PackageDetailsPage() {
   const searchParams = useSearchParams();
-  const id = searchParams.get('id') as string;
+  const id = searchParams?.get('id') as string;
 
   return (
     <Grid container spacing={6}>

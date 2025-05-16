@@ -45,11 +45,9 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
-  const params = useParams()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
-  const { lang: locale } = params
 
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
@@ -74,12 +72,12 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
         {/* Home */}
-        <MenuItem
+        {/*<MenuItem
           href={`/home`}
           icon={<i className='tabler-smart-home' />}
         >
           {dictionary['navigation']?.home || 'Home'}
-        </MenuItem>
+        </MenuItem>*/}
 
         {/* Agent */}
         <MenuItem
@@ -168,12 +166,12 @@ const VerticalMenu = ({ dictionary, scrollMenu }: Props) => {
           </MenuItem>
 
           {/* Contact Person */}
-          <MenuItem
+          {/*<MenuItem
             href={`/admin/contact-person`}
             icon={<i className='tabler-phone' />}
           >
             {dictionary['navigation']?.contactPerson || 'Contact Person'}
-          </MenuItem>
+          </MenuItem>*/}
         </MenuSection>
 
       </Menu>

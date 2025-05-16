@@ -1,74 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Search, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface GroupPhoto {
-  color: string;
-  caption: string;
-}
-
-interface Photo {
-  id: number;
-  title: string;
-  category: string;
-  description: string;
-  tags: string[];
-  group: string;
-  groupPhotos: GroupPhoto[];
-  color: string;
-}
-
-const photos: Photo[] = [
-  {
-    id: 1,
-    title: 'Masjid Al-Haram',
-    category: 'Makkah',
-    description: 'The Great Mosque of Mecca',
-    tags: ['architecture', 'spiritual', 'holy'],
-    group: 'makkah-series',
-    groupPhotos: [
-      { color: 'hsl(340, 70%, 75%)', caption: 'External View' },
-      { color: 'hsl(350, 70%, 75%)', caption: 'Interior View' },
-      { color: 'hsl(360, 70%, 75%)', caption: 'Night View' },
-    ]
-  },
-  {
-    id: 2,
-    title: 'Masjid Nabawi',
-    category: 'Madinah',
-    description: "The Prophet's Mosque",
-    tags: ['historical', 'spiritual', 'architecture'],
-    group: 'madinah-series',
-    groupPhotos: [
-      { color: 'hsl(120, 70%, 75%)', caption: 'Main Entrance' },
-      { color: 'hsl(140, 70%, 75%)', caption: 'Green Dome' },
-      { color: 'hsl(160, 70%, 75%)', caption: 'Prayer Hall' },
-    ]
-  },
-  {
-    id: 3,
-    title: 'Mount Uhud',
-    category: 'Landmarks',
-    description: 'Historical battlefield site',
-    tags: ['nature', 'historical'],
-    group: 'landmarks-series',
-    groupPhotos: [
-      { color: 'hsl(220, 70%, 75%)', caption: 'Panoramic View' },
-      { color: 'hsl(240, 70%, 75%)', caption: 'Sunset View' },
-      { color: 'hsl(260, 70%, 75%)', caption: 'Historical Markers' },
-    ]
-  }
-].map(photo => ({
-  ...photo,
-  color: `hsl(${Math.random() * 360}, 70%, 75%)`
-}));
-
-const filters = {
-  categories: ['All Categories', 'Makkah', 'Madinah', 'Landmarks'],
-  tags: ['All Tags', 'architecture', 'spiritual', 'historical', 'nature', 'holy'],
-};
+import { GalleryContext } from '@/contexts/GalleryContext';
+import { Photo, GroupPhoto } from '@/types/gallery';
 
 const PhotoCard: React.FC<{ photo: Photo; onClick: () => void }> = ({ photo, onClick }) => {
+  const [imageError, setImageError] = useState(false);
+
+  // Get a representative image from groupPhotos (first image or random)
+  const thumbnailImage = photo.groupPhotos.length > 0 ? photo.groupPhotos[0] : null;
+
   return (
     <motion.div
       layout
@@ -78,12 +19,24 @@ const PhotoCard: React.FC<{ photo: Photo; onClick: () => void }> = ({ photo, onC
       className="relative group cursor-pointer overflow-hidden rounded-xl shadow-lg"
       onClick={onClick}
     >
-      <div className="aspect-square w-full" style={{ backgroundColor: photo.color }} />
+      <div
+        className="aspect-square w-full"
+        style={{ backgroundColor: photo.color || thumbnailImage?.color || '#f0f0f0' }}
+      >
+        {thumbnailImage?.imageSrc && !imageError && (
+          <img
+            src={thumbnailImage.imageSrc}
+            alt={photo.title}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
+          />
+        )}
+      </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <h3 className="text-lg font-bold">{photo.title}</h3>
           <p className="text-sm opacity-90">{photo.description}</p>
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2 mt-2 flex-wrap">
             {photo.tags.map(tag => (
               <span key={tag} className="text-xs px-2 py-1 bg-white/20 rounded-full">{tag}</span>
             ))}
@@ -94,23 +47,40 @@ const PhotoCard: React.FC<{ photo: Photo; onClick: () => void }> = ({ photo, onC
   );
 };
 
-const Carousel: React.FC<{ photos: GroupPhoto[]; currentIndex: number; setCurrentIndex: (index: number | ((prev: number) => number)) => void; onClose: () => void }> = ({ photos, currentIndex, setCurrentIndex, onClose }) => {
+const Carousel: React.FC<{
+  photos: GroupPhoto[];
+  currentIndex: number;
+  setCurrentIndex: (index: number | ((prev: number) => number)) => void;
+  onClose: () => void
+}> = ({ photos, currentIndex, setCurrentIndex, onClose }) => {
+  const [imageError, setImageError] = useState<Record<number, boolean>>({});
+
+  const handleImageError = (index: number) => {
+    setImageError(prev => ({ ...prev, [index]: true }));
+  };
+
   return (
     <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-      <button onClick={onClose} className="absolute top-4 right-4 text-white hover:text-gray-300 z-50">
-        <span className="absolute top-2 right-2 bg-gray-800 text-white w-8 h-8 flex items-center justify-center rounded-full">X</span>
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white bg-gray-800 hover:bg-gray-700 rounded-full p-2 transition-colors duration-200 shadow-lg z-50"
+        aria-label="Close gallery"
+      >
+        <X size={24} />
       </button>
 
       <button
-        onClick={() => setCurrentIndex((prev ):number => (prev > 0 ? prev - 1 : photos.length - 1))}
-        className="absolute left-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50"
+        onClick={() => setCurrentIndex(prev => (prev > 0 ? prev - 1 : photos.length - 1))}
+        className="absolute left-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors duration-200"
+        aria-label="Previous image"
       >
         <ChevronLeft size={24} />
       </button>
 
       <button
-        onClick={() => setCurrentIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0))}
-        className="absolute right-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50"
+        onClick={() => setCurrentIndex(prev => (prev < photos.length - 1 ? prev + 1 : 0))}
+        className="absolute right-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors duration-200"
+        aria-label="Next image"
       >
         <ChevronRight size={24} />
       </button>
@@ -124,9 +94,21 @@ const Carousel: React.FC<{ photos: GroupPhoto[]; currentIndex: number; setCurren
           transition={{ duration: 0.3 }}
           className="max-w-4xl w-full mx-4"
         >
-          <div className="aspect-video w-full rounded-lg overflow-hidden" style={{ backgroundColor: photos[currentIndex].color }} />
+          <div
+            className="aspect-video w-full rounded-lg overflow-hidden"
+            style={{ backgroundColor: photos[currentIndex]?.color || '#f0f0f0' }}
+          >
+            {photos[currentIndex]?.imageSrc && !imageError[currentIndex] && (
+              <img
+                src={photos[currentIndex].imageSrc}
+                alt={photos[currentIndex].caption}
+                className="w-full h-full object-cover"
+                onError={() => handleImageError(currentIndex)}
+              />
+            )}
+          </div>
           <div className="mt-4 text-white text-center">
-            <p className="text-xl font-medium">{photos[currentIndex].caption}</p>
+            <p className="text-xl font-medium">{photos[currentIndex]?.caption}</p>
             <p className="text-sm text-gray-300 mt-2">{currentIndex + 1} of {photos.length}</p>
           </div>
         </motion.div>
@@ -136,19 +118,44 @@ const Carousel: React.FC<{ photos: GroupPhoto[]; currentIndex: number; setCurren
 };
 
 export default function PhotoGallery() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
-  const [selectedTag, setSelectedTag] = useState('All Tags');
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<any>(0);
+  const galleryContext = useContext(GalleryContext);
 
-  const filteredPhotos = photos.filter(photo => {
-    const matchesSearch = photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      photo.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All Categories' || photo.category === selectedCategory;
-    const matchesTag = selectedTag === 'All Tags' || photo.tags.includes(selectedTag);
-    return matchesSearch && matchesCategory && matchesTag;
-  });
+  if (!galleryContext) {
+    throw new Error("PhotoGallery must be used within a GalleryProvider");
+  }
+
+  const {
+    filteredPhotos,
+    selectedPhoto,
+    currentPhotoIndex,
+    searchTerm,
+    selectedCategory,
+    selectedTag,
+    filters,
+    setSearchTerm,
+    setSelectedCategory,
+    setSelectedTag,
+    setSelectedPhoto,
+    setCurrentPhotoIndex,
+    loading,
+    error
+  } = galleryContext;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 p-4 md:p-8 flex items-center justify-center">
+        <div className="text-xl text-rose-700">Loading gallery...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 p-4 md:p-8 flex items-center justify-center">
+        <div className="text-xl text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-100 p-4 md:p-8">
@@ -236,4 +243,4 @@ export default function PhotoGallery() {
       </div>
     </div>
   );
-}
+};

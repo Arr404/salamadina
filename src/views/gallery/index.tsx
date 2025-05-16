@@ -6,7 +6,8 @@ import {  useEffect } from 'react'
 // Component Imports
 import GalleryHeader from './GalleryHeader'
 import { useSettings } from '@core/hooks/useSettings'
-import PackageFilter from '@views/gallery/GalleryFilter'
+import PhotoGallery from '@views/gallery/GalleryFilter'
+import { GalleryProvider } from '@/contexts/GalleryContext'
 
 
 const GalleryWrapper = () => {
@@ -27,7 +28,9 @@ const GalleryWrapper = () => {
   return (
     <>
       <GalleryHeader />
-      <PackageFilter/>
+      <GalleryProvider>
+        <PhotoGallery/>
+      </GalleryProvider>
     </>
   )
 }

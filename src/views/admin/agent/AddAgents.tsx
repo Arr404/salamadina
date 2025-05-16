@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
@@ -19,52 +19,67 @@ import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import MuiStep from '@mui/material/Step'
 import type { StepProps } from '@mui/material/Step'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Avatar from '@mui/material/Avatar'
 
 // Third-party Imports
 import { toast } from 'react-toastify'
 import classnames from 'classnames'
 
+// Firebase Imports
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore'
+import { db } from '@/services/init'
+
 // Component Imports
 import CustomAvatar from '@core/components/mui/Avatar'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
+import { uploadImage } from '@/services/cloudinary'
 
 // Styles Component Imports
 import StepperWrapper from '@core/styles/stepper'
 
-type FormDataType = {
-  username: string
-  email: string
-  password: string
-  isPasswordShown: boolean
-  confirmPassword: string
-  isConfirmPasswordShown: boolean
-  firstName: string
-  lastName: string
-  country: string
-  language: string[]
-  twitter: string
-  facebook: string
-  instagram: string
-  github: string
+// Interfaces
+interface IAgent {
+  id?: string;
+  number: number;
+  name: string;
+  address: string;
+  phone: string | null;
+  lat: number | null;
+  long: number | null;
+  profileImage?: string;
+}
+
+interface FormDataType {
+  name: string;
+  address: string;
+  phone: string;
+  lat: string;
+  long: string;
+  profileImage?: File | null;
+  profileImageUrl?: string;
+  isEdit: boolean;
+  editId?: string;
 }
 
 // Vars
 const steps = [
   {
-    icon: 'tabler-file-analytics',
-    title: 'Account Details',
-    subtitle: 'Enter your account details'
+    title: 'Agent Details',
+    subtitle: 'Enter Agent Information',
+    icon: 'tabler-user'
   },
   {
-    icon: 'tabler-user',
-    title: 'Personal Info',
-    subtitle: 'Setup Information'
+    title: 'Location',
+    subtitle: 'Set Agent Location',
+    icon: 'tabler-map-pin'
   },
   {
-    icon: 'tabler-brand-instagram',
-    title: 'Social Links',
-    subtitle: 'Add Social Links'
+    title: 'Profile Image',
+    subtitle: 'Upload Agent Profile Image',
+    icon: 'tabler-photo'
   }
 ]
 
@@ -94,57 +109,92 @@ const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
 const AddAgents = () => {
   // States
   const [activeStep, setActiveStep] = useState(0)
+  const [agents, setAgents] = useState<IAgent[]>([])
+  const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
 
-  const [formData, setFormData] = useState<FormDataType>({
-    username: '',
-    email: '',
-    password: '',
-    isPasswordShown: false,
-    confirmPassword: '',
-    isConfirmPasswordShown: false,
-    firstName: '',
-    lastName: '',
-    country: '',
-    language: [],
-    twitter: '',
-    facebook: '',
-    instagram: '',
-    github: ''
-  })
+  const defaultFormData: FormDataType = {
+    name: '',
+    address: '',
+    phone: '',
+    lat: '',
+    long: '',
+    profileImage: null,
+    profileImageUrl: '',
+    isEdit: false,
+    editId: ''
+  }
 
-  const handleClickShowPassword = () => setFormData(show => ({ ...show, isPasswordShown: !show.isPasswordShown }))
+  const [formData, setFormData] = useState<FormDataType>(defaultFormData)
 
-  const handleClickShowConfirmPassword = () =>
-    setFormData(show => ({ ...show, isConfirmPasswordShown: !show.isConfirmPasswordShown }))
+  // Fetch agents on mount
+  useEffect(() => {
+    fetchAgents()
+  }, [])
+
+  const fetchAgents = async () => {
+    setLoading(true)
+    try {
+      const querySnapshot = await getDocs(collection(db, 'agents'))
+      const agentData: IAgent[] = []
+
+      querySnapshot.forEach((doc) => {
+        agentData.push({ id: doc.id, ...doc.data() } as IAgent)
+      })
+
+      setAgents(agentData)
+    } catch (error) {
+      console.error('Error fetching agents:', error)
+      toast.error('Failed to fetch agents')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleReset = () => {
     setActiveStep(0)
-    setFormData({
-      username: '',
-      email: '',
-      password: '',
-      isPasswordShown: false,
-      confirmPassword: '',
-      isConfirmPasswordShown: false,
-      firstName: '',
-      lastName: '',
-      country: '',
-      language: [],
-      twitter: '',
-      facebook: '',
-      instagram: '',
-      github: ''
-    })
+    setFormData(defaultFormData)
+    setSelectedFile(null)
+    setImagePreview(null)
   }
 
   const handleNext = () => {
+    // Form validation depending on the current step
+    if (activeStep === 0) {
+      if (!formData.name || !formData.address || !formData.phone) {
+        toast.error('Please fill in all required fields')
+        return
+      }
+    } else if (activeStep === 1) {
+      if (!formData.lat || !formData.long) {
+        toast.error('Please enter latitude and longitude')
+        return
+      }
+
+      // Validate latitude and longitude
+      const lat = parseFloat(formData.lat)
+      const long = parseFloat(formData.long)
+
+      if (isNaN(lat) || lat < -90 || lat > 90) {
+        toast.error('Please enter a valid latitude (-90 to 90)')
+        return
+      }
+
+      if (isNaN(long) || long < -180 || long > 180) {
+        toast.error('Please enter a valid longitude (-180 to 180)')
+        return
+      }
+    }
+
     setActiveStep(prevActiveStep => prevActiveStep + 1)
 
     if (activeStep === steps.length - 1) {
-      toast.success('Form Submitted')
+      handleSubmit()
     }
   }
 
@@ -152,77 +202,150 @@ const AddAgents = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1)
   }
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0]
+      setSelectedFile(file)
+
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+
+      setFormData({ ...formData, profileImage: file })
+    }
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    try {
+      let profileImageUrl = formData.profileImageUrl
+
+      // Upload image if selected
+      if (selectedFile) {
+        setUploading(true)
+        try {
+          const uploadResult = await uploadImage(selectedFile)
+          profileImageUrl = uploadResult.secure_url
+          setUploading(false)
+        } catch (error) {
+          console.error('Error uploading image:', error)
+          toast.error('Failed to upload image')
+          setUploading(false)
+          setLoading(false)
+          return
+        }
+      }
+
+      const agentData: Omit<IAgent, 'id'> = {
+        number: agents.length + 1,
+        name: formData.name,
+        address: formData.address,
+        phone: formData.phone,
+        lat: parseFloat(formData.lat),
+        long: parseFloat(formData.long),
+        ...(profileImageUrl && { profileImage: profileImageUrl })
+      }
+
+      if (formData.isEdit && formData.editId) {
+        // Update existing agent
+        await updateDoc(doc(db, 'agents', formData.editId), agentData)
+        toast.success('Agent updated successfully')
+      } else {
+        // Add new agent
+        await addDoc(collection(db, 'agents'), agentData)
+        toast.success('Agent added successfully')
+      }
+
+      // Refresh agents list
+      await fetchAgents()
+      handleReset()
+
+    } catch (error) {
+      console.error('Error adding/updating agent:', error)
+      toast.error('Failed to save agent information')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEdit = (agent: IAgent) => {
+    if (!agent.id) return
+
+    setFormData({
+      name: agent.name,
+      address: agent.address,
+      phone: agent.phone || '',
+      lat: agent.lat ? agent.lat.toString() : '',
+      long: agent.long ? agent.long.toString() : '',
+      profileImageUrl: agent.profileImage || '',
+      profileImage: null,
+      isEdit: true,
+      editId: agent.id
+    })
+
+    if (agent.profileImage) {
+      setImagePreview(agent.profileImage)
+    }
+
+    setActiveStep(0)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this agent?')) return
+
+    setLoading(true)
+    try {
+      await deleteDoc(doc(db, 'agents', id))
+      toast.success('Agent deleted successfully')
+      await fetchAgents()
+    } catch (error) {
+      console.error('Error deleting agent:', error)
+      toast.error('Failed to delete agent')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const renderStepContent = (activeStep: number) => {
     switch (activeStep) {
       case 0:
         return (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <CustomTextField
                 fullWidth
-                label='Username'
-                placeholder='johnDoe'
-                value={formData.username}
-                onChange={e => setFormData({ ...formData, username: e.target.value })}
+                required
+                label='Agent Name'
+                placeholder='John Doe'
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <CustomTextField
                 fullWidth
-                type='email'
-                label='Email'
-                placeholder='johndoe@gmail.com'
-                value={formData.email}
-                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                required
+                label='Address'
+                placeholder='123 Main St, City, Country'
+                value={formData.address}
+                onChange={e => setFormData({ ...formData, address: e.target.value })}
+                multiline
+                rows={3}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <CustomTextField
                 fullWidth
-                label='Password'
-                placeholder='············'
-                id='stepper-customHorizontal-password'
-                type={formData.isPasswordShown ? 'text' : 'password'}
-                value={formData.password}
-                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                required
+                label='Phone Number'
+                placeholder='+1234567890'
+                value={formData.phone}
+                onChange={e => setFormData({ ...formData, phone: e.target.value })}
                 InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
-                      >
-                        <i className={formData.isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Confirm Password'
-                placeholder='············'
-                id='stepper-customHorizontal-confirm-password'
-                type={formData.isConfirmPasswordShown ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowConfirmPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle confirm password visibility'
-                      >
-                        <i className={formData.isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
+                  startAdornment: <InputAdornment position='start'><i className='tabler-phone' /></InputAdornment>
                 }}
               />
             </Grid>
@@ -234,96 +357,65 @@ const AddAgents = () => {
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                label='First Name'
-                placeholder='John'
-                value={formData.firstName}
-                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                required
+                label='Latitude'
+                placeholder='-7.30910'
+                value={formData.lat}
+                onChange={e => setFormData({ ...formData, lat: e.target.value })}
+                helperText='Value between -90 and 90'
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                label='Last Name'
-                placeholder='Doe'
-                value={formData.lastName}
-                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                required
+                label='Longitude'
+                placeholder='112.7731'
+                value={formData.long}
+                onChange={e => setFormData({ ...formData, long: e.target.value })}
+                helperText='Value between -180 and 180'
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                select
-                fullWidth
-                label='Country'
-                value={formData.country}
-                onChange={e => setFormData({ ...formData, country: e.target.value as string })}
-              >
-                <MenuItem value=''>Select Country</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Germany'>Germany</MenuItem>
-              </CustomTextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                select
-                fullWidth
-                label='Language'
-                value={formData.language}
-                SelectProps={{
-                  multiple: true,
-                  onChange: e => setFormData({ ...formData, language: e.target.value as string[] })
-                }}
-              >
-                <MenuItem value='English'>English</MenuItem>
-                <MenuItem value='French'>French</MenuItem>
-                <MenuItem value='Spanish'>Spanish</MenuItem>
-                <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                <MenuItem value='Italian'>Italian</MenuItem>
-                <MenuItem value='German'>German</MenuItem>
-                <MenuItem value='Arabic'>Arabic</MenuItem>
-              </CustomTextField>
+            <Grid item xs={12}>
+              <Typography variant='body2' className='mb-2'>
+                Tip: You can find latitude and longitude values by right-clicking on a location in Google Maps and selecting "What's here?"
+              </Typography>
             </Grid>
           </>
         )
       case 2:
         return (
           <>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Facebook'
-                placeholder='https://www.facebook.com/johndoe'
-                value={formData.facebook}
-                onChange={e => setFormData({ ...formData, facebook: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Twitter'
-                placeholder='https://www.twitter.com/johndoe'
-                value={formData.twitter}
-                onChange={e => setFormData({ ...formData, twitter: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Instagram'
-                placeholder='https://www.instagram.com/johndoe'
-                value={formData.instagram}
-                onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Github'
-                placeholder='https://www.github.com/johndoe'
-                value={formData.github}
-                onChange={e => setFormData({ ...formData, github: e.target.value })}
-              />
+            <Grid item xs={12} className='flex flex-col items-center'>
+              {imagePreview && (
+                <Box className='mb-4'>
+                  <Avatar
+                    src={imagePreview}
+                    alt="Agent Preview"
+                    sx={{ width: 120, height: 120 }}
+                  />
+                </Box>
+              )}
+
+              <Button
+                variant='contained'
+                component='label'
+                className='mb-4'
+                startIcon={<i className='tabler-upload' />}
+                disabled={uploading}
+              >
+                {uploading ? 'Uploading...' : 'Upload Profile Image'}
+                <input
+                  type='file'
+                  hidden
+                  accept='image/*'
+                  onChange={handleFileChange}
+                />
+              </Button>
+
+              <Typography variant='body2' color='text.secondary'>
+                Profile image will be displayed on the agent's card. Max file size: 5MB.
+              </Typography>
             </Grid>
           </>
         )
@@ -334,7 +426,7 @@ const AddAgents = () => {
 
   return (
     <>
-      <Card>
+      <Card className='mb-6'>
         <CardContent>
           <StepperWrapper>
             <Stepper
@@ -382,7 +474,7 @@ const AddAgents = () => {
               <Typography className='mlb-2 mli-1'>All steps are completed!</Typography>
               <div className='flex justify-end mt-4'>
                 <Button variant='contained' onClick={handleReset}>
-                  Reset
+                  Add New Agent
                 </Button>
               </div>
             </>
@@ -410,20 +502,86 @@ const AddAgents = () => {
                     <Button
                       variant='contained'
                       onClick={handleNext}
+                      disabled={loading || uploading}
                       endIcon={
                         activeStep === steps.length - 1 ? (
-                          <i className='tabler-check' />
+                          loading || uploading ? (
+                            <CircularProgress size={16} color="inherit" />
+                          ) : (
+                            <i className='tabler-check' />
+                          )
                         ) : (
                           <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
                         )
                       }
                     >
-                      {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                      {activeStep === steps.length - 1 ? (formData.isEdit ? 'Update' : 'Submit') : 'Next'}
                     </Button>
                   </Grid>
                 </Grid>
               </form>
             </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Agents List Card */}
+      <Card>
+        <CardContent>
+          <Typography variant='h6' className='mb-4'>
+            Manage Agents
+          </Typography>
+
+          {loading ? (
+            <Box className='flex justify-center p-6'>
+              <CircularProgress />
+            </Box>
+          ) : agents.length === 0 ? (
+            <Typography className='text-center p-6'>
+              No agents found. Add your first agent using the form above.
+            </Typography>
+          ) : (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+              {agents.map((agent) => (
+                <Card key={agent.id} variant='outlined' className='relative'>
+                  <CardContent className='flex flex-col items-center p-4'>
+                    <Avatar
+                      src={agent.profileImage || ''}
+                      alt={agent.name}
+                      sx={{ width: 80, height: 80, mb: 2 }}
+                    >
+                      {agent.name.split(' ').map(word => word[0]).join('')}
+                    </Avatar>
+                    <Typography variant='h6' className='text-center'>{agent.name}</Typography>
+                    <Typography variant='body2' className='text-center text-gray-600 mb-2'>{agent.address}</Typography>
+                    <Typography variant='body2' className='text-center mb-4'>
+                      <i className='tabler-phone mr-1' /> {agent.phone || 'N/A'}
+                    </Typography>
+
+                    <div className='flex gap-2 mt-2'>
+                      <Button
+                        size='small'
+                        variant='outlined'
+                        color='primary'
+                        onClick={() => agent.id && handleEdit(agent)}
+                        startIcon={<i className='tabler-edit' />}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size='small'
+                        variant='outlined'
+                        color='error'
+                        onClick={() => agent.id && handleDelete(agent.id)}
+                        startIcon={<i className='tabler-trash' />}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>

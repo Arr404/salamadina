@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 // MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
@@ -9,426 +9,545 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import CardContent from '@mui/material/CardContent'
-import Stepper from '@mui/material/Stepper'
-import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
-import InputAdornment from '@mui/material/InputAdornment'
-import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
-import MuiStep from '@mui/material/Step'
-import type { StepProps } from '@mui/material/Step'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import Rating from '@mui/material/Rating'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import Box from '@mui/material/Box'
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Paper from '@mui/material/Paper'
+import IconButton from '@mui/material/IconButton'
 
 // Third-party Imports
 import { toast } from 'react-toastify'
-import classnames from 'classnames'
+import { collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 
 // Component Imports
 import CustomAvatar from '@core/components/mui/Avatar'
-import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
 
-// Styles Component Imports
-import StepperWrapper from '@core/styles/stepper'
+// Firebase Import (assuming you have this configured)
+import { db } from '@/services/init'
+import { uploadImage } from '@/services/cloudinary'
+// Type Imports
+import { Testimonial } from '@/types/testimonial'
+import Image from 'next/image'
+import { ImagePlus as AddPhotoAlternateIcon } from 'lucide-react'
 
-type FormDataType = {
-  username: string
-  email: string
-  password: string
-  isPasswordShown: boolean
-  confirmPassword: string
-  isConfirmPasswordShown: boolean
-  firstName: string
-  lastName: string
-  country: string
-  language: string[]
-  twitter: string
-  facebook: string
-  instagram: string
-  github: string
+interface TabPanelProps {
+  children?: React.ReactNode
+  index: number
+  value: number
 }
 
-// Vars
-const steps = [
-  {
-    icon: 'tabler-file-analytics',
-    title: 'Account Details',
-    subtitle: 'Enter your account details'
-  },
-  {
-    icon: 'tabler-user',
-    title: 'Personal Info',
-    subtitle: 'Setup Information'
-  },
-  {
-    icon: 'tabler-brand-instagram',
-    title: 'Social Links',
-    subtitle: 'Add Social Links'
-  }
-]
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props
 
-const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
-  paddingInline: theme.spacing(7),
-  '&:first-of-type': {
-    paddingLeft: 0
-  },
-  '&:last-of-type': {
-    paddingRight: 0
-  },
-  '& .MuiStepLabel-iconContainer': {
-    display: 'none'
-  },
-  '&.Mui-completed .step-title , &.Mui-completed .step-subtitle': {
-    color: 'var(--mui-palette-text-disabled)'
-  },
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`testimonial-tabpanel-${index}`}
+      aria-labelledby={`testimonial-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  )
+}
 
-  [theme.breakpoints.down('md')]: {
-    padding: 0,
-    ':not(:last-of-type)': {
-      marginBlockEnd: theme.spacing(6)
-    }
-  }
-}))
-
-const AddReview = () => {
+const TestimonialManagement = () => {
   // States
-  const [activeStep, setActiveStep] = useState(0)
+  const [tabValue, setTabValue] = useState(0)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [openDialog, setOpenDialog] = useState(false)
+  const [currentTestimonial, setCurrentTestimonial] = useState<Testimonial | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [dialogLanguage, setDialogLanguage] = useState<'en' | 'ind'>('en')
+  const [avatarImage, setAvatarImage] = useState<string>('/images/avatars/1.png')
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploading, setUploading] = useState(false)
+  const [formData, setFormData] = useState<Testimonial>({
+    name: '',
+    position: '',
+    avatarSrc: '/images/avatars/1.png',
+    rating: 5,
+    desc: {
+      en: '',
+      ind: ''
+    }
+  })
 
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
 
-  const [formData, setFormData] = useState<FormDataType>({
-    username: '',
-    email: '',
-    password: '',
-    isPasswordShown: false,
-    confirmPassword: '',
-    isConfirmPasswordShown: false,
-    firstName: '',
-    lastName: '',
-    country: '',
-    language: [],
-    twitter: '',
-    facebook: '',
-    instagram: '',
-    github: ''
-  })
+  // Fetch testimonials from Firestore
+  const fetchTestimonials = async () => {
+    try {
+      const testimonialsCollection = collection(db, 'testimonials')
+      const testimonialsSnapshot = await getDocs(testimonialsCollection)
+      const testimonialsList: Testimonial[] = []
 
-  const handleClickShowPassword = () => setFormData(show => ({ ...show, isPasswordShown: !show.isPasswordShown }))
+      testimonialsSnapshot.forEach((doc) => {
+        testimonialsList.push({ id: doc.id, ...doc.data() } as Testimonial)
+      })
 
-  const handleClickShowConfirmPassword = () =>
-    setFormData(show => ({ ...show, isConfirmPasswordShown: !show.isConfirmPasswordShown }))
+      setTestimonials(testimonialsList)
+    } catch (error) {
+      console.error('Error fetching testimonials:', error)
+      toast.error('Failed to fetch testimonials')
+    }
+  }
 
-  const handleReset = () => {
-    setActiveStep(0)
+  useEffect(() => {
+    fetchTestimonials()
+  }, [])
+
+  // Handle tab change
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue)
+  }
+
+  // Open dialog for creating new testimonial
+  const handleAddTestimonial = () => {
     setFormData({
-      username: '',
-      email: '',
-      password: '',
-      isPasswordShown: false,
-      confirmPassword: '',
-      isConfirmPasswordShown: false,
-      firstName: '',
-      lastName: '',
-      country: '',
-      language: [],
-      twitter: '',
-      facebook: '',
-      instagram: '',
-      github: ''
+      name: '',
+      position: '',
+      avatarSrc: '/images/avatars/1.png',
+      rating: 5,
+      desc: {
+        en: '',
+        ind: ''
+      }
     })
+    setAvatarImage('/images/avatars/1.png')
+    setIsEditing(false)
+    setOpenDialog(true)
   }
 
-  const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1)
+  // Open dialog for editing existing testimonial
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setFormData({ ...testimonial })
+    setAvatarImage(testimonial.avatarSrc || '/images/avatars/1.png')
+    setIsEditing(true)
+    setOpenDialog(true)
+  }
 
-    if (activeStep === steps.length - 1) {
-      toast.success('Form Submitted')
+  // Image upload handler
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      try {
+        setUploading(true)
+        setUploadProgress(0)
+
+        const file = event.target.files[0]
+
+        // Simulating upload progress - in a real app, you'd get this from your upload service
+        const progressInterval = setInterval(() => {
+          setUploadProgress(prev => {
+            if (prev >= 90) {
+              clearInterval(progressInterval)
+              return 90
+            }
+            return prev + 10
+          })
+        }, 300)
+
+        // Upload image to Cloudinary
+        const uploadResult = await uploadImage(file)
+
+        // Clear interval and set progress to 100%
+        clearInterval(progressInterval)
+        setUploadProgress(100)
+
+        // Update state with the new image URL
+        setAvatarImage(uploadResult.secure_url)
+        setFormData(prev => ({ ...prev, avatarSrc: uploadResult.secure_url }))
+
+        setTimeout(() => {
+          setUploading(false)
+          setUploadProgress(0)
+        }, 500)
+
+      } catch (error) {
+        console.error('Error uploading image:', error)
+        toast.error('Failed to upload image')
+        setUploading(false)
+        setUploadProgress(0)
+      }
     }
   }
 
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1)
+  // View testimonial details
+  const handleViewTestimonial = (testimonial: Testimonial) => {
+    setCurrentTestimonial(testimonial)
   }
 
-  const renderStepContent = (activeStep: number) => {
-    switch (activeStep) {
-      case 0:
-        return (
-          <>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Username'
-                placeholder='johnDoe'
-                value={formData.username}
-                onChange={e => setFormData({ ...formData, username: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                type='email'
-                label='Email'
-                placeholder='johndoe@gmail.com'
-                value={formData.email}
-                onChange={e => setFormData({ ...formData, email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Password'
-                placeholder='············'
-                id='stepper-customHorizontal-password'
-                type={formData.isPasswordShown ? 'text' : 'password'}
-                value={formData.password}
-                onChange={e => setFormData({ ...formData, password: e.target.value })}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
-                      >
-                        <i className={formData.isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Confirm Password'
-                placeholder='············'
-                id='stepper-customHorizontal-confirm-password'
-                type={formData.isConfirmPasswordShown ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowConfirmPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle confirm password visibility'
-                      >
-                        <i className={formData.isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </Grid>
-          </>
-        )
-      case 1:
-        return (
-          <>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='First Name'
-                placeholder='John'
-                value={formData.firstName}
-                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Last Name'
-                placeholder='Doe'
-                value={formData.lastName}
-                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                select
-                fullWidth
-                label='Country'
-                value={formData.country}
-                onChange={e => setFormData({ ...formData, country: e.target.value as string })}
-              >
-                <MenuItem value=''>Select Country</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Germany'>Germany</MenuItem>
-              </CustomTextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                select
-                fullWidth
-                label='Language'
-                value={formData.language}
-                SelectProps={{
-                  multiple: true,
-                  onChange: e => setFormData({ ...formData, language: e.target.value as string[] })
-                }}
-              >
-                <MenuItem value='English'>English</MenuItem>
-                <MenuItem value='French'>French</MenuItem>
-                <MenuItem value='Spanish'>Spanish</MenuItem>
-                <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                <MenuItem value='Italian'>Italian</MenuItem>
-                <MenuItem value='German'>German</MenuItem>
-                <MenuItem value='Arabic'>Arabic</MenuItem>
-              </CustomTextField>
-            </Grid>
-          </>
-        )
-      case 2:
-        return (
-          <>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Facebook'
-                placeholder='https://www.facebook.com/johndoe'
-                value={formData.facebook}
-                onChange={e => setFormData({ ...formData, facebook: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Twitter'
-                placeholder='https://www.twitter.com/johndoe'
-                value={formData.twitter}
-                onChange={e => setFormData({ ...formData, twitter: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Instagram'
-                placeholder='https://www.instagram.com/johndoe'
-                value={formData.instagram}
-                onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Github'
-                placeholder='https://www.github.com/johndoe'
-                value={formData.github}
-                onChange={e => setFormData({ ...formData, github: e.target.value })}
-              />
-            </Grid>
-          </>
-        )
-      default:
-        return 'Unknown step'
+  // Close dialog
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+    setCurrentTestimonial(null)
+  }
+
+  // Save testimonial (create or update)
+  const handleSaveTestimonial = async () => {
+    try {
+      if (isEditing && formData.id) {
+        // Update existing testimonial
+        const testimonialRef = doc(db, 'testimonials', formData.id)
+        await updateDoc(testimonialRef, {
+          name: formData.name,
+          position: formData.position,
+          avatarSrc: formData.avatarSrc,
+          rating: formData.rating,
+          desc: formData.desc,
+          updatedAt: new Date()
+        })
+        toast.success('Testimonial updated successfully')
+      } else {
+        // Create new testimonial
+        await addDoc(collection(db, 'testimonials'), {
+          name: formData.name,
+          position: formData.position,
+          avatarSrc: formData.avatarSrc,
+          rating: formData.rating,
+          desc: formData.desc,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        toast.success('Testimonial added successfully')
+      }
+
+      handleCloseDialog()
+      fetchTestimonials()
+    } catch (error) {
+      console.error('Error saving testimonial:', error)
+      toast.error('Failed to save testimonial')
     }
+  }
+
+  // Delete testimonial
+  const handleDeleteTestimonial = async (id: string) => {
+    if (confirm('Are you sure you want to delete this testimonial?')) {
+      try {
+        await deleteDoc(doc(db, 'testimonials', id))
+        toast.success('Testimonial deleted successfully')
+        fetchTestimonials()
+      } catch (error) {
+        console.error('Error deleting testimonial:', error)
+        toast.error('Failed to delete testimonial')
+      }
+    }
+  }
+
+  // Toggle language in dialog
+  const handleToggleLanguage = () => {
+    setDialogLanguage(dialogLanguage === 'en' ? 'ind' : 'en')
   }
 
   return (
     <>
       <Card>
         <CardContent>
-          <StepperWrapper>
-            <Stepper
-              activeStep={activeStep}
-              connector={
-                !isSmallScreen ? (
-                  <DirectionalIcon
-                    ltrIconClass='tabler-chevron-right'
-                    rtlIconClass='tabler-chevron-left'
-                    className='text-xl'
-                  />
-                ) : null
-              }
-            >
-              {steps.map((step, index) => {
-                return (
-                  <Step key={index}>
-                    <StepLabel>
-                      <div className='step-label'>
-                        <CustomAvatar
-                          variant='rounded'
-                          skin={activeStep === index ? 'filled' : 'light'}
-                          {...(activeStep >= index && { color: 'primary' })}
-                          {...(activeStep === index && { className: 'shadow-primarySm' })}
-                          size={38}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+            <Typography variant="h6" component="h2">
+              Testimonial Management
+            </Typography>
+            <Button variant="contained" onClick={handleAddTestimonial} startIcon={<i className="tabler-plus" />}>
+              Add Testimonial
+            </Button>
+          </Box>
+
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={tabValue} onChange={handleTabChange} aria-label="testimonial management tabs">
+              <Tab label="All Testimonials" />
+              <Tab label="Preview" />
+            </Tabs>
+          </Box>
+
+          <TabPanel value={tabValue} index={0}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="testimonials table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Profile</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Position</TableCell>
+                    <TableCell>Rating</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {testimonials.map((testimonial) => (
+                    <TableRow key={testimonial.id}>
+                      <TableCell>
+                        <CustomAvatar src={testimonial.avatarSrc} alt={testimonial.name} />
+                      </TableCell>
+                      <TableCell>{testimonial.name}</TableCell>
+                      <TableCell>{testimonial.position}</TableCell>
+                      <TableCell>
+                        <Rating value={testimonial.rating} readOnly />
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleViewTestimonial(testimonial)}
+                          title="View"
                         >
-                          <i className={classnames(step.icon)} />
-                        </CustomAvatar>
-                        <div>
-                          <Typography className='step-title'>{step.title}</Typography>
-                          <Typography className='step-subtitle'>{step.subtitle}</Typography>
-                        </div>
-                      </div>
-                    </StepLabel>
-                  </Step>
-                )
-              })}
-            </Stepper>
-          </StepperWrapper>
-        </CardContent>
-        <Divider sx={{ m: '0 !important' }} />
-        <CardContent>
-          {activeStep === steps.length ? (
-            <>
-              <Typography className='mlb-2 mli-1'>All steps are completed!</Typography>
-              <div className='flex justify-end mt-4'>
-                <Button variant='contained' onClick={handleReset}>
-                  Reset
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <form onSubmit={e => e.preventDefault()}>
-                <Grid container spacing={6}>
-                  <Grid item xs={12}>
-                    <Typography className='font-medium' color='text.primary'>
-                      {steps[activeStep].title}
-                    </Typography>
-                    <Typography variant='body2'>{steps[activeStep].subtitle}</Typography>
-                  </Grid>
-                  {renderStepContent(activeStep)}
-                  <Grid item xs={12} className='flex justify-between'>
-                    <Button
-                      variant='tonal'
-                      disabled={activeStep === 0}
-                      onClick={handleBack}
-                      startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
-                      color='secondary'
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant='contained'
-                      onClick={handleNext}
-                      endIcon={
-                        activeStep === steps.length - 1 ? (
-                          <i className='tabler-check' />
-                        ) : (
-                          <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
-                        )
-                      }
-                    >
-                      {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-                    </Button>
-                  </Grid>
+                          <i className="tabler-eye" />
+                        </IconButton>
+                        <IconButton
+                          color="info"
+                          onClick={() => handleEditTestimonial(testimonial)}
+                          title="Edit"
+                        >
+                          <i className="tabler-edit" />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => testimonial.id && handleDeleteTestimonial(testimonial.id)}
+                          title="Delete"
+                        >
+                          <i className="tabler-trash" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {testimonials.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">
+                        No testimonials found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </TabPanel>
+
+          <TabPanel value={tabValue} index={1}>
+            <Grid container spacing={6}>
+              {testimonials.map((testimonial) => (
+                <Grid item xs={12} md={6} key={testimonial.id}>
+                  <Card>
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                        <CustomAvatar src={testimonial.avatarSrc} alt={testimonial.name} sx={{ mr: 2 }} />
+                        <Box>
+                          <Typography variant="subtitle1">{testimonial.name}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {testimonial.position}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Rating value={testimonial.rating} readOnly sx={{ mb: 2 }} />
+                      <Typography variant="body2" paragraph>
+                        {testimonial.desc.en}
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 </Grid>
-              </form>
-            </>
-          )}
+              ))}
+              {testimonials.length === 0 && (
+                <Grid item xs={12}>
+                  <Typography align="center">No testimonials to preview</Typography>
+                </Grid>
+              )}
+            </Grid>
+          </TabPanel>
         </CardContent>
       </Card>
+
+      {/* Add/Edit Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+        <DialogTitle>
+          {isEditing ? 'Edit Testimonial' : 'Add New Testimonial'}
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={3} sx={{ mt: 0.5 }}>
+            <Grid item xs={12} sm={6}>
+              <CustomTextField
+                fullWidth
+                label="Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <CustomTextField
+                fullWidth
+                label="Position"
+                value={formData.position}
+                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <div className="flex flex-col">
+                <div className="relative h-40 bg-gray-100 rounded-lg mb-2 overflow-hidden">
+                  {avatarImage ? (
+                    <Image
+                      src={avatarImage}
+                      alt="Avatar"
+                      fill
+                      className="object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/api/placeholder/800/300';
+                      }}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <Typography variant="body2" color="textSecondary">No image</Typography>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <CustomTextField
+                    fullWidth
+                    label="Avatar URL"
+                    value={formData.avatarSrc || ''}
+                    onChange={(e) => {
+                      const url = e.target.value;
+                      setAvatarImage(url);
+                      setFormData({ ...formData, avatarSrc: url });
+                    }}
+                  />
+                  <label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                    <Button
+                      component="span"
+                      variant="contained"
+                      color="primary"
+                      disabled={uploading}
+                      startIcon={<AddPhotoAlternateIcon />}
+                    >
+                      {uploading ? `${uploadProgress}%` : 'Upload'}
+                    </Button>
+                  </label>
+                </div>
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography component="legend">Rating</Typography>
+              <Rating
+                name="testimonial-rating"
+                value={formData.rating}
+                onChange={(event, newValue) => {
+                  setFormData({ ...formData, rating: newValue || 5 })
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography component="legend">Testimonial Description</Typography>
+                <Button size="small" onClick={handleToggleLanguage}>
+                  Switch to {dialogLanguage === 'en' ? 'Indonesian' : 'English'}
+                </Button>
+              </Box>
+              <CustomTextField
+                fullWidth
+                multiline
+                rows={6}
+                label={dialogLanguage === 'en' ? 'English Description' : 'Indonesian Description'}
+                value={formData.desc[dialogLanguage]}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  desc: {
+                    ...formData.desc,
+                    [dialogLanguage]: e.target.value
+                  }
+                })}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleSaveTestimonial}>
+            {isEditing ? 'Update' : 'Save'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* View Testimonial Dialog */}
+      {currentTestimonial && (
+        <Dialog open={Boolean(currentTestimonial)} onClose={() => setCurrentTestimonial(null)} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            Testimonial Details
+          </DialogTitle>
+          <DialogContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <CustomAvatar src={currentTestimonial.avatarSrc} alt={currentTestimonial.name} sx={{ width: 64, height: 64, mr: 2 }} />
+              <Box>
+                <Typography variant="h6">{currentTestimonial.name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {currentTestimonial.position}
+                </Typography>
+                <Rating value={currentTestimonial.rating} readOnly sx={{ mt: 1 }} />
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography variant="subtitle1" gutterBottom>English</Typography>
+            <Typography variant="body2" paragraph>
+              {currentTestimonial.desc.en}
+            </Typography>
+
+            <Typography variant="subtitle1" gutterBottom>Indonesian</Typography>
+            <Typography variant="body2" paragraph>
+              {currentTestimonial.desc.ind}
+            </Typography>
+
+            {currentTestimonial.createdAt && (
+              <Typography variant="caption" display="block" sx={{ mt: 2 }}>
+                Created: {new Date(currentTestimonial.createdAt as any).toLocaleString()}
+              </Typography>
+            )}
+            {currentTestimonial.updatedAt && (
+              <Typography variant="caption" display="block">
+                Last Updated: {new Date(currentTestimonial.updatedAt as any).toLocaleString()}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCurrentTestimonial(null)}>
+              Close
+            </Button>
+            <Button
+              color="info"
+              variant="contained"
+              onClick={() => {
+                handleEditTestimonial(currentTestimonial)
+                setCurrentTestimonial(null)
+              }}
+            >
+              Edit
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   )
 }
 
-export default AddReview
+export default TestimonialManagement

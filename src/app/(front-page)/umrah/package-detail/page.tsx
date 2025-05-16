@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 
 const Page = () => {
   const searchParams = useSearchParams();
-  const id = searchParams.get('id') as string;
+  const id = searchParams?.get('id') as string;
 
   return <PackageViewDetails packageId={id} type={'umrahPackages'}/>
 }

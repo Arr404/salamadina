@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
@@ -18,57 +18,51 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import MuiStep from '@mui/material/Step'
-import type { StepProps } from '@mui/material/Step'
+import CircularProgress from '@mui/material/CircularProgress'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 
 // Third-party Imports
 import { toast } from 'react-toastify'
-import classnames from 'classnames'
+import { v4 as uuidv4 } from 'uuid'
 
 // Component Imports
-import CustomAvatar from '@core/components/mui/Avatar'
-import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
 
-// Styles Component Imports
-import StepperWrapper from '@core/styles/stepper'
+// Context Imports
+import { useGallery } from '@/hooks/useGallery'
+import { GroupPhoto, Photo } from '@/types/gallery'
 
-type FormDataType = {
-  username: string
-  email: string
-  password: string
-  isPasswordShown: boolean
-  confirmPassword: string
-  isConfirmPasswordShown: boolean
-  firstName: string
-  lastName: string
-  country: string
-  language: string[]
-  twitter: string
-  facebook: string
-  instagram: string
-  github: string
-}
+// Firebase & Cloudinary Imports
+import { uploadImage } from '@/services/cloudinary'
+import { Timestamp } from 'firebase/firestore'
+import StepperWrapper from '@/@core/styles/stepper'
+import CustomAvatar from '@/@core/components/mui/Avatar'
+import DirectionalIcon from '@/components/DirectionalIcon'
+import classnames from 'classnames'
 
 // Vars
 const steps = [
   {
-    icon: 'tabler-file-analytics',
-    title: 'Account Details',
-    subtitle: 'Enter your account details'
+    icon: 'tabler-image',
+    title: 'Photo Details',
+    subtitle: 'Enter basic photo information'
   },
   {
-    icon: 'tabler-user',
-    title: 'Personal Info',
-    subtitle: 'Setup Information'
+    icon: 'tabler-category',
+    title: 'Categories & Tags',
+    subtitle: 'Set categorization data'
   },
   {
-    icon: 'tabler-brand-instagram',
-    title: 'Social Links',
-    subtitle: 'Add Social Links'
+    icon: 'tabler-photo',
+    title: 'Group Photos',
+    subtitle: 'Add related photos'
   }
 ]
 
-const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
+const Step = styled(MuiStep)(({ theme }) => ({
   paddingInline: theme.spacing(7),
   '&:first-of-type': {
     paddingLeft: 0
@@ -91,60 +85,158 @@ const Step = styled(MuiStep)<StepProps>(({ theme }) => ({
   }
 }))
 
-const AddGallery = () => {
+const GalleryManagement = ({ editId = null }: { editId?: string | null }) => {
+  // Get gallery context (from useGallery)
+  const {
+    photos,
+    addPhoto,
+    updatePhoto,
+    deletePhoto,
+    isAdmin,
+    setEditingPhoto,
+    filters
+  } = useGallery()
+
   // States
   const [activeStep, setActiveStep] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [formData, setFormData] = useState<Photo & {
+    newTag?: string;
+    currentGroupPhotoFile?: File | null;
+    currentGroupPhotoImageSrc?: string;
+    currentGroupPhotoCaption?: string;
+  }>({
+    id: '',
+    title: '',
+    description: '',
+    color: `hsl(${Math.random() * 360}, 70%, 75%)`,
+    category: '',
+    tags: [],
+    group: '',
+    groupPhotos: [],
+    dateAdded: Timestamp.now(),
+  })
 
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
 
-  const [formData, setFormData] = useState<FormDataType>({
-    username: '',
-    email: '',
-    password: '',
-    isPasswordShown: false,
-    confirmPassword: '',
-    isConfirmPasswordShown: false,
-    firstName: '',
-    lastName: '',
-    country: '',
-    language: [],
-    twitter: '',
-    facebook: '',
-    instagram: '',
-    github: ''
-  })
+  // Fetch photo data if in edit mode
+  useEffect(() => {
+    const fetchPhotoData = async () => {
+      if (editId) {
+        setLoading(true)
+        setIsEditing(true)
+        try {
+          // Find the photo in the photos array
+          const photoToEdit = photos.find(photo => photo.id === editId)
 
-  const handleClickShowPassword = () => setFormData(show => ({ ...show, isPasswordShown: !show.isPasswordShown }))
+          if (photoToEdit) {
+            setFormData({
+              ...photoToEdit,
+              newTag: '',
+              currentGroupPhotoCaption: ''
+            })
+            // Also set the editing photo in the context
+            setEditingPhoto(photoToEdit)
+          } else {
+            toast.error('Photo not found')
+          }
+        } catch (error) {
+          console.error('Error fetching photo:', error)
+          toast.error('Failed to fetch photo data')
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
 
-  const handleClickShowConfirmPassword = () =>
-    setFormData(show => ({ ...show, isConfirmPasswordShown: !show.isConfirmPasswordShown }))
+    fetchPhotoData()
+  }, [editId, photos, setEditingPhoto])
 
   const handleReset = () => {
-    setActiveStep(0)
     setFormData({
-      username: '',
-      email: '',
-      password: '',
-      isPasswordShown: false,
-      confirmPassword: '',
-      isConfirmPasswordShown: false,
-      firstName: '',
-      lastName: '',
-      country: '',
-      language: [],
-      twitter: '',
-      facebook: '',
-      instagram: '',
-      github: ''
+      id: '',
+      title: '',
+      description: '',
+      color: `hsl(${Math.random() * 360}, 70%, 75%)`,
+      category: '',
+      tags: [],
+      group: '',
+      groupPhotos: [],
+      dateAdded: Timestamp.now(),
+      newTag: '',
     })
+    setActiveStep(0)
+    setIsEditing(false)
+    setEditingPhoto(null)
   }
 
-  const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1)
+  const handleDelete = async () => {
+    if (!formData.id) return
 
+    setLoading(true)
+    try {
+      await deletePhoto(formData.id)
+
+      toast.success('Gallery photo deleted successfully!')
+      handleReset()
+    } catch (error) {
+      console.error('Error deleting photo:', error)
+      toast.error('Failed to delete gallery photo. Please try again.')
+    } finally {
+      setLoading(false)
+      setDeleteDialogOpen(false)
+    }
+  }
+
+  const handleNext = async () => {
     if (activeStep === steps.length - 1) {
-      toast.success('Form Submitted')
+      try {
+        setLoading(true)
+
+
+        const groupPhotos = [...formData.groupPhotos]
+
+        if (isEditing) {
+          const photoData: Partial<Photo> = {
+            title: formData.title,
+            description: formData.description,
+            category: formData.category,
+            tags: formData.tags,
+            group: formData.group,
+            color: formData.color,
+            groupPhotos
+          }
+
+          await updatePhoto(formData.id, photoData)
+          toast.success('Gallery photo updated successfully!')
+        } else {
+          // Create new photo
+          const newPhotoData = {
+            title: formData.title,
+            description: formData.description,
+            category: formData.category,
+            tags: formData.tags,
+            group: formData.group,
+            color: formData.color,
+            groupPhotos
+          }
+
+          await addPhoto(newPhotoData)
+          toast.success('Gallery photo added successfully!')
+        }
+
+        handleReset()
+      } catch (error) {
+        console.error('Error saving photo:', error)
+        toast.error('Failed to save gallery photo. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      setActiveStep(prevActiveStep => prevActiveStep + 1)
     }
   }
 
@@ -152,78 +244,127 @@ const AddGallery = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1)
   }
 
+  const addTag = () => {
+    if (formData.newTag && !formData.tags.includes(formData.newTag)) {
+      setFormData({
+        ...formData,
+        tags: [...formData.tags, formData.newTag],
+        newTag: ''
+      })
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
+    setFormData({
+      ...formData,
+      tags: formData.tags.filter(tag => tag !== tagToRemove)
+    })
+  }
+
+
+  const handleGroupPhotoImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setFormData({
+        ...formData,
+        currentGroupPhotoFile: file,
+        currentGroupPhotoImageSrc: URL.createObjectURL(file)
+      })
+    }
+  }
+
+  const addGroupPhoto = async () => {
+    if (formData.currentGroupPhotoCaption && (formData.currentGroupPhotoFile || formData.currentGroupPhotoImageSrc)) {
+      try {
+        setLoading(true)
+
+        let imageSrc = formData.currentGroupPhotoImageSrc || ''
+        if (formData.currentGroupPhotoFile) {
+          const cloudinaryImageSrc = await uploadImage(formData.currentGroupPhotoFile)
+          imageSrc = cloudinaryImageSrc.secure_url
+        }
+
+        const newGroupPhoto: GroupPhoto = {
+          id: uuidv4(),
+          caption: formData.currentGroupPhotoCaption || '',
+          imageSrc,
+          color: `hsl(${Math.random() * 360}, 70%, 75%)`
+        }
+
+        setFormData({
+          ...formData,
+          groupPhotos: [...formData.groupPhotos, newGroupPhoto],
+          currentGroupPhotoCaption: '',
+          currentGroupPhotoFile: null,
+          currentGroupPhotoImageSrc: ''
+        })
+      } catch (error) {
+        console.error('Error adding group photo:', error)
+        toast.error('Failed to upload group photo image.')
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+
+  const removeGroupPhoto = (index: number) => {
+    const updatedGroupPhotos = [...formData.groupPhotos]
+    updatedGroupPhotos.splice(index, 1)
+    setFormData({
+      ...formData,
+      groupPhotos: updatedGroupPhotos
+    })
+  }
+
   const renderStepContent = (activeStep: number) => {
     switch (activeStep) {
       case 0:
         return (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               <CustomTextField
                 fullWidth
-                label='Username'
-                placeholder='johnDoe'
-                value={formData.username}
-                onChange={e => setFormData({ ...formData, username: e.target.value })}
+                label='Title'
+                placeholder='Enter photo title'
+                value={formData.title}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} md={6}>
               <CustomTextField
                 fullWidth
-                type='email'
-                label='Email'
-                placeholder='johndoe@gmail.com'
-                value={formData.email}
-                onChange={e => setFormData({ ...formData, email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Password'
-                placeholder='············'
-                id='stepper-customHorizontal-password'
-                type={formData.isPasswordShown ? 'text' : 'password'}
-                value={formData.password}
-                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                label='Color (optional)'
+                placeholder='hsl(270, 70%, 75%)'
+                value={formData.color}
+                onChange={e => setFormData({ ...formData, color: e.target.value })}
+                helperText="Color theme for this photo"
                 InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle password visibility'
-                      >
-                        <i className={formData.isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <div
+                        style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: 4,
+                          backgroundColor: formData.color
+                        }}
+                      />
                     </InputAdornment>
                   )
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <CustomTextField
                 fullWidth
-                label='Confirm Password'
-                placeholder='············'
-                id='stepper-customHorizontal-confirm-password'
-                type={formData.isConfirmPasswordShown ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowConfirmPassword}
-                        onMouseDown={e => e.preventDefault()}
-                        aria-label='toggle confirm password visibility'
-                      >
-                        <i className={formData.isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
+                multiline
+                rows={4}
+                label='Description'
+                placeholder='Enter photo description'
+                value={formData.description}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                required
               />
             </Grid>
           </>
@@ -233,97 +374,203 @@ const AddGallery = () => {
           <>
             <Grid item xs={12} sm={6}>
               <CustomTextField
-                fullWidth
-                label='First Name'
-                placeholder='John'
-                value={formData.firstName}
-                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Last Name'
-                placeholder='Doe'
-                value={formData.lastName}
-                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
                 select
                 fullWidth
-                label='Country'
-                value={formData.country}
-                onChange={e => setFormData({ ...formData, country: e.target.value as string })}
+                label='Category'
+                value={formData.category}
+                onChange={e => setFormData({ ...formData, category: e.target.value })}
+                required
               >
-                <MenuItem value=''>Select Country</MenuItem>
-                <MenuItem value='UK'>UK</MenuItem>
-                <MenuItem value='USA'>USA</MenuItem>
-                <MenuItem value='Australia'>Australia</MenuItem>
-                <MenuItem value='Germany'>Germany</MenuItem>
+                <MenuItem value=''>Select Category</MenuItem>
+                {filters.categories
+                  .filter(cat => cat !== 'All Categories')
+                  .map(category => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                <MenuItem value='new-category'>
+                  <Typography color='primary'>+ Add New Category</Typography>
+                </MenuItem>
               </CustomTextField>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {formData.category === 'new-category' && (
+              <Grid item xs={12} sm={6}>
+                <CustomTextField
+                  fullWidth
+                  label='New Category'
+                  placeholder='Enter new category name'
+                  value={formData.category === 'new-category' ? '' : formData.category}
+                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  required
+                />
+              </Grid>
+            )}
+            <Grid item xs={12}>
               <CustomTextField
-                select
                 fullWidth
-                label='Language'
-                value={formData.language}
-                SelectProps={{
-                  multiple: true,
-                  onChange: e => setFormData({ ...formData, language: e.target.value as string[] })
-                }}
-              >
-                <MenuItem value='English'>English</MenuItem>
-                <MenuItem value='French'>French</MenuItem>
-                <MenuItem value='Spanish'>Spanish</MenuItem>
-                <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                <MenuItem value='Italian'>Italian</MenuItem>
-                <MenuItem value='German'>German</MenuItem>
-                <MenuItem value='Arabic'>Arabic</MenuItem>
-              </CustomTextField>
+                label='Group (optional)'
+                placeholder='Enter group name'
+                value={formData.group}
+                onChange={e => setFormData({ ...formData, group: e.target.value })}
+                helperText="Group photos by theme or event"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography className='mb-2' variant='body2'>
+                Tags
+              </Typography>
+              <div className='flex flex-wrap gap-2 mb-2'>
+                {formData.tags.map(tag => (
+                  <div
+                    key={tag}
+                    className='px-3 py-1 rounded-full bg-primary-100 flex items-center gap-2'
+                  >
+                    <span>{tag}</span>
+                    <i
+                      className='tabler-x cursor-pointer'
+                      onClick={() => removeTag(tag)}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className='flex gap-2'>
+                <CustomTextField
+                  fullWidth
+                  label='Add Tag'
+                  placeholder='Enter new tag'
+                  value={formData.newTag || ''}
+                  onChange={e => setFormData({ ...formData, newTag: e.target.value })}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addTag();
+                    }
+                  }}
+                />
+                <Button variant='contained' onClick={addTag}>
+                  Add
+                </Button>
+              </div>
             </Grid>
           </>
         )
       case 2:
         return (
           <>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Facebook'
-                placeholder='https://www.facebook.com/johndoe'
-                value={formData.facebook}
-                onChange={e => setFormData({ ...formData, facebook: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Twitter'
-                placeholder='https://www.twitter.com/johndoe'
-                value={formData.twitter}
-                onChange={e => setFormData({ ...formData, twitter: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Instagram'
-                placeholder='https://www.instagram.com/johndoe'
-                value={formData.instagram}
-                onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomTextField
-                fullWidth
-                label='Github'
-                placeholder='https://www.github.com/johndoe'
-                value={formData.github}
-                onChange={e => setFormData({ ...formData, github: e.target.value })}
-              />
+            <Grid item xs={12}>
+              <Typography variant='body2' className='mb-2'>
+                Add Group Photos (Optional)
+              </Typography>
+              {formData.groupPhotos.length > 0 && (
+                <div className='mb-4'>
+                  <Typography variant='subtitle2' className='mb-2'>
+                    Current Group Photos:
+                  </Typography>
+                  <div className='flex flex-wrap gap-4'>
+                    {formData.groupPhotos.map((photo, index) => (
+                      <div
+                        key={index}
+                        className='border rounded p-3 flex flex-col items-center'
+                        style={{ backgroundColor: photo.color }}
+                      >
+                        <div className='h-32 w-32 bg-gray-200 mb-2 flex items-center justify-center'>
+                          {photo.imageSrc ? (
+                            <img
+                              src={photo.imageSrc}
+                              alt={photo.caption}
+                              className='max-h-full max-w-full object-cover'
+                            />
+                          ) : (
+                            <i className='tabler-photo text-4xl' />
+                          )}
+                        </div>
+                        <Typography variant='caption' className='text-center mb-2'>
+                          {photo.caption}
+                        </Typography>
+                        <Button
+                          size='small'
+                          color='error'
+                          variant='text'
+                          onClick={() => removeGroupPhoto(index)}
+                        >
+                          <i className='tabler-trash-x mr-1' /> Remove
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className='border rounded p-4'>
+                <Typography variant='subtitle2' className='mb-2'>
+                  Add New Group Photo
+                </Typography>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <div className='flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 mb-3 relative'>
+                      {formData.currentGroupPhotoImageSrc ? (
+                        <div className='flex flex-col items-center'>
+                          <img
+                            src={formData.currentGroupPhotoImageSrc}
+                            alt="Group photo preview"
+                            className='max-h-48 max-w-full object-contain mb-3'
+                          />
+                          <Button
+                            variant='outlined'
+                            color='error'
+                            onClick={() => setFormData({...formData, currentGroupPhotoImageSrc: '', currentGroupPhotoFile: null})}
+                          >
+                            Remove Image
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className='flex flex-col items-center py-6'>
+                          <i className='tabler-upload text-3xl mb-2' />
+                          <Typography variant='body2' className='mb-2'>Drop an image or click to browse</Typography>
+                          <Button
+                            variant='contained'
+                            component='label'
+                            size='small'
+                          >
+                            Upload Image
+                            <input
+                              type='file'
+                              hidden
+                              accept='image/*'
+                              onChange={handleGroupPhotoImageChange}
+                            />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <CustomTextField
+                      fullWidth
+                      label='Caption'
+                      placeholder='Enter image caption'
+                      value={formData.currentGroupPhotoCaption || ''}
+                      onChange={e => setFormData({ ...formData, currentGroupPhotoCaption: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      variant='contained'
+                      color='secondary'
+                      onClick={addGroupPhoto}
+                      disabled={!formData.currentGroupPhotoCaption || (!formData.currentGroupPhotoFile && !formData.currentGroupPhotoImageSrc) || loading}
+                    >
+                      {loading ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        <>
+                          <i className='tabler-plus mr-1' /> Add Group Photo
+                        </>
+                      )}
+                    </Button>
+                  </Grid>
+                </Grid>
+              </div>
             </Grid>
           </>
         )
@@ -332,10 +579,41 @@ const AddGallery = () => {
     }
   }
 
+  // Dialog for delete confirmation
+  const DeleteConfirmationDialog = () => (
+    <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+      <DialogTitle>Confirm Delete</DialogTitle>
+      <DialogContent>
+        <Typography>Are you sure you want to delete this gallery photo? This action cannot be undone.</Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setDeleteDialogOpen(false)} variant="outlined">Cancel</Button>
+        <Button onClick={handleDelete} variant="contained" color="error" disabled={loading}>
+          {loading ? <CircularProgress size={24} /> : 'Delete'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   return (
     <>
       <Card>
         <CardContent>
+          <div className="flex justify-between items-center mb-4">
+            <Typography variant='h6'>
+              {isEditing ? 'Edit Gallery Photo' : 'Add New Gallery Photo'}
+            </Typography>
+            {isEditing && (
+              <Button
+                variant='outlined'
+                color='error'
+                onClick={() => setDeleteDialogOpen(true)}
+                startIcon={<i className='tabler-trash' />}
+              >
+                Delete
+              </Button>
+            )}
+          </div>
           <StepperWrapper>
             <Stepper
               activeStep={activeStep}
@@ -349,29 +627,27 @@ const AddGallery = () => {
                 ) : null
               }
             >
-              {steps.map((step, index) => {
-                return (
-                  <Step key={index}>
-                    <StepLabel>
-                      <div className='step-label'>
-                        <CustomAvatar
-                          variant='rounded'
-                          skin={activeStep === index ? 'filled' : 'light'}
-                          {...(activeStep >= index && { color: 'primary' })}
-                          {...(activeStep === index && { className: 'shadow-primarySm' })}
-                          size={38}
-                        >
-                          <i className={classnames(step.icon)} />
-                        </CustomAvatar>
-                        <div>
-                          <Typography className='step-title'>{step.title}</Typography>
-                          <Typography className='step-subtitle'>{step.subtitle}</Typography>
-                        </div>
+              {steps.map((step, index) => (
+                <Step key={index}>
+                  <StepLabel>
+                    <div className='step-label'>
+                      <CustomAvatar
+                        variant='rounded'
+                        skin={activeStep === index ? 'filled' : 'light'}
+                        {...(activeStep >= index && { color: 'primary' })}
+                        {...(activeStep === index && { className: 'shadow-primarySm' })}
+                        size={38}
+                      >
+                        <i className={classnames(step.icon)} />
+                      </CustomAvatar>
+                      <div>
+                        <Typography className='step-title'>{step.title}</Typography>
+                        <Typography className='step-subtitle'>{step.subtitle}</Typography>
                       </div>
-                    </StepLabel>
-                  </Step>
-                )
-              })}
+                    </div>
+                  </StepLabel>
+                </Step>
+              ))}
             </Stepper>
           </StepperWrapper>
         </CardContent>
@@ -379,10 +655,12 @@ const AddGallery = () => {
         <CardContent>
           {activeStep === steps.length ? (
             <>
-              <Typography className='mlb-2 mli-1'>All steps are completed!</Typography>
+              <Typography className='mb-2 ml-1'>
+                Photo {isEditing ? 'updated' : 'added'} successfully!
+              </Typography>
               <div className='flex justify-end mt-4'>
                 <Button variant='contained' onClick={handleReset}>
-                  Reset
+                  {isEditing ? 'Back to Edit Mode' : 'Add Another Photo'}
                 </Button>
               </div>
             </>
@@ -410,15 +688,18 @@ const AddGallery = () => {
                     <Button
                       variant='contained'
                       onClick={handleNext}
+                      disabled={loading}
                       endIcon={
-                        activeStep === steps.length - 1 ? (
+                        loading ? (
+                          <CircularProgress size={16} color="inherit" />
+                        ) : activeStep === steps.length - 1 ? (
                           <i className='tabler-check' />
                         ) : (
                           <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
                         )
                       }
                     >
-                      {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                      {activeStep === steps.length - 1 ? (isEditing ? 'Update' : 'Submit') : 'Next'}
                     </Button>
                   </Grid>
                 </Grid>
@@ -427,8 +708,9 @@ const AddGallery = () => {
           )}
         </CardContent>
       </Card>
+      <DeleteConfirmationDialog />
     </>
   )
 }
 
-export default AddGallery
+export default GalleryManagement

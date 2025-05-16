@@ -121,7 +121,7 @@ const LoginV2 = () => {
 
     authPromise
       .then(() => {
-        router.push('/home')
+        router.push('/admin/gallery')
       })
       .catch((error) => {
         console.error('Authentication error:', error)
@@ -138,7 +138,7 @@ const LoginV2 = () => {
 
     loginWithGoogle()
       .then(() => {
-        router.push('/home')
+        router.push('/admin/gallery')
       })
       .catch((error) => {
         console.error('Google Sign-in error:', error)

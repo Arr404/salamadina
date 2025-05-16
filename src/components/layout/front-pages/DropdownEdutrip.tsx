@@ -251,7 +251,7 @@ const DropdownEdutrip = (props: Props) => {
                   key={itemIndex}
                   href={item.href}
                   className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary', {
-                    'text-primary': pathname.includes(item.href)
+                    'text-primary': pathname?.includes(item.href)
                   })}
                   onClick={handleLinkClick}
                 >

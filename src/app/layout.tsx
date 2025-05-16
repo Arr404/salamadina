@@ -37,7 +37,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Salamadina</title>
     </head>
-    <body className="flex is-full min-bs-full flex-auto flex-col">
+    <body className="overflow-x-hidden flex is-full min-bs-full flex-auto flex-col">
     {children}
     </body>
     </html>

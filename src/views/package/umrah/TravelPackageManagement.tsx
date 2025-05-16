@@ -396,7 +396,7 @@ const UmrahPackagesManagement: React.FC<Props> = (props) => {
         indFeatures: cleanedIndFeatures
       };
 
-      await umrahPackageservice.addPackage(packageData,type);
+      await umrahPackageservice.addPackage(packageData,props.type);
 
       setFormData({ ...initialFormData });
       setSelectedTags([]);

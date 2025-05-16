@@ -28,7 +28,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isLoginData !== false) {
-      router.push('/home');
+      router.push('/admin/gallery');
     }
   }, [isLoginData, router]);
   return <Login />

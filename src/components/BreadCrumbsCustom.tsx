@@ -2,17 +2,17 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 
 type BreadcrumbProps = {
-  packageType: string;
-  subType: string | null;
+  packageType: string | undefined;
+  subType: string | undefined;
 };
 
 const BreadCrumbCustom: React.FC<BreadcrumbProps> = ({ packageType, subType }) => {
   // Use the first word from packageType as the base category.
-  const baseCategory = packageType.split(" ")[0];
-  const baseCategorySlug = baseCategory.toLowerCase();
+  const baseCategory = packageType?.split(" ")[0];
+  const baseCategorySlug = baseCategory?.toLowerCase();
 
   // Create the package link. For example, "Umrah Reguler" becomes "/umrah/reguler"
-  const packageLink = "/" + packageType.toLowerCase().split(" ").join("/");
+  const packageLink = "/" + packageType?.toLowerCase().split(" ").join("/");
 
   let subTypeSlugParts: string[] = [];
   if (subType) {

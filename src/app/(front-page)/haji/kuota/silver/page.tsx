@@ -1,8 +1,8 @@
 // Component Imports
-import UmrahWrapper from '@views/umrah'
+import HajiWrapper from '@views/umrah/HajiWrapper'
 
-function UmrahPage() {
-  return <UmrahWrapper />
+function HajiPage() {
+  return <HajiWrapper />
 }
 
-export default UmrahPage
+export default HajiPage

@@ -1,8 +1,8 @@
 // Component Imports
-import UmrahWrapper from '@views/umrah'
+import HalalTourWrapper from '@views/umrah/HalalTourWrapper'
 
-function UmrahPage() {
-  return <UmrahWrapper />
+function HalalTourPage() {
+  return <HalalTourWrapper />
 }
 
-export default UmrahPage
+export default HalalTourPage

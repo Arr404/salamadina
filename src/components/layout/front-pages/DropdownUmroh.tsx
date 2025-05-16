@@ -202,7 +202,7 @@ const DropdownUmroh = (props: Props) => {
         color='text.primary'
         className={classnames(
           'flex items-center gap-2 font-medium plb-3 pli-1.5 hover:text-primary',
-          { 'text-primary': ['/front-pages/payment', '/front-pages/pricing', '/front-pages/checkout', '/front-pages/umrah', '/front-pages/umrah/article/package-detail'].includes(pathname) }
+          { 'text-primary': ['/front-pages/payment', '/front-pages/pricing', '/front-pages/checkout', '/front-pages/umrah', '/front-pages/umrah/article/package-detail'].includes(pathname? pathname:'') }
         )}
         {...(isBelowLgScreen
           ? { onClick: (e : any) => { e.preventDefault(); setIsOpen(!isOpen); } }
@@ -272,7 +272,7 @@ const DropdownUmroh = (props: Props) => {
                   <Link
                     key={index}
                     href={section.href}
-                    className={classnames('', { 'text-primary': pathname.includes(section.href) })}
+                    className={classnames('', { 'text-primary': pathname?.includes(section.href) })}
                     onClick={handleLinkClick}
                   >
                     <Typography variant='h6'>{section.title}</Typography>
@@ -282,7 +282,7 @@ const DropdownUmroh = (props: Props) => {
                   <Link
                     key={idx}
                     href={page.href}
-                    className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary pl-10', { 'text-primary': pathname.includes(page.href) })}
+                    className={classnames('flex items-center gap-3 focus:outline-none hover:text-primary pl-10', { 'text-primary': pathname?.includes(page.href) })}
                     onClick={handleLinkClick}
                   >
                     <i className='tabler-circle text-[10px]' />

@@ -145,10 +145,10 @@ const PackageViewDetails = ({ packageId, type }: { packageId: string, type:strin
   const renderContent = () => (
     <section className="flex flex-col justify-center items-center gap-6 bg-white py-10 px-4 md:px-10">
       {/* Breadcrumbs */}
-      <BreadCrumbCustom packageType={packageSelected.packageType} subType={packageSelected.subType} />
+      <BreadCrumbCustom packageType={packageSelected?.packageType} subType={packageSelected?.subType} />
 
       {/* Title Section */}
-      <h1 className="text-3xl font-bold text-center text-[#811745]">{packageSelected.title}</h1>
+      <h1 className="text-3xl font-bold text-center text-[#811745]">{packageSelected?.title}</h1>
 
       {!loading && packageSelected && (
         <>
@@ -199,7 +199,7 @@ const PackageViewDetails = ({ packageId, type }: { packageId: string, type:strin
                 Rp {packageSelected.price.toLocaleString('id-ID')}
               </p>
             </div>
-            {packageSelected.seatsTotal > 0 && (
+            {packageSelected.totalSeats > 0 && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2">
                   <Users className="w-5 h-5 text-[#811745]" />
@@ -208,11 +208,11 @@ const PackageViewDetails = ({ packageId, type }: { packageId: string, type:strin
                 <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
                   <div
                     className="bg-[#811745] h-2.5 rounded-full"
-                    style={{ width: `${(packageSelected.seatsLeft / packageSelected.seatsTotal) * 100}%` }}
+                    style={{ width: `${(packageSelected.seatsLeft / packageSelected.totalSeats) * 100}%` }}
                   ></div>
                 </div>
                 <p className="text-sm text-gray-600 mt-1">
-                  {packageSelected.seatsLeft} dari {packageSelected.seatsTotal} kursi
+                  {packageSelected.seatsLeft} dari {packageSelected.totalSeats} kursi
                 </p>
               </div>
             )}
@@ -348,7 +348,7 @@ const PackageViewDetails = ({ packageId, type }: { packageId: string, type:strin
                 <h3 className="text-lg font-semibold text-[#811745] mb-2">Butuh Informasi Lebih Lanjut?</h3>
                 <p className="text-[#811745] mb-4">Hubungi tim kami untuk konsultasi dan pemesanan.</p>
                 <button  onClick={() =>
-                  window.open(`https://wa.me/${packageDetails.phone}`, "_blank", "noopener,noreferrer")
+                  window.open(`https://wa.me/${packageDetails?.phone}`, "_blank", "noopener,noreferrer")
                 } className="w-full bg-[#811745] text-white py-2 px-4 rounded-lg hover:bg-[#6a1238] transition">
                   Hubungi Kami
                 </button>
