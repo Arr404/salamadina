@@ -55,6 +55,7 @@ type MenuWrapperProps = {
 const menuData = [
   {
     title: 'Corporate Trip',
+    href: '/halaltour/corporate',
     icon: 'tabler-layout-grid',
     items: [
       { title: 'Bronze', href: '/halaltour/corporate/bronze' },
@@ -64,6 +65,7 @@ const menuData = [
   },
   {
     title: 'Explore Mancanegara',
+    href: '/halaltour/explore',
     icon: 'tabler-globe',
     items: [
       { title: 'Bronze', href: '/halaltour/explore/bronze' },
@@ -244,7 +246,14 @@ const DropdownEdutrip = (props: Props) => {
                 <CustomAvatar variant='rounded' color='primary' skin='light'>
                   <i className={menu.icon} />
                 </CustomAvatar>
-                <Typography variant='h6'>{menu.title}</Typography>
+                <Link
+                  key={menuIndex}
+                  href={menu.href}
+                  className={classnames('', { 'text-primary': pathname?.includes(menu.href) })}
+                  onClick={handleLinkClick}
+                >
+                  <Typography variant='h6'>{menu.title}</Typography>
+                </Link>
               </div>
               {menu.items.map((item, itemIndex) => (
                 <Link

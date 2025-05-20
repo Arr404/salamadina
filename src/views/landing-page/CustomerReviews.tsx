@@ -114,7 +114,7 @@ const CustomerReviews = () => {
   });
 
   return (
-    <section className={classnames('flex flex-col gap-8 plb-[100px] bg-backgroundDefault', styles.sectionStartRadius)}>
+    <section className={classnames('py-8 flex flex-col gap-8 plb-[100px] bg-backgroundDefault', styles.sectionStartRadius)}>
       <div
         className={classnames('flex max-md:flex-col max-sm:flex-wrap is-full gap-6', frontCommonStyles.layoutSpacing)}
       >

@@ -47,10 +47,10 @@ const Header = ({ mode, setIsLoading }: { mode: Mode, setIsLoading: Dispatch<Set
   })
 
   return (
-    <header className={`${classnames(frontLayoutClasses.header, styles.header)} z-10`}>
+    <header className={`${classnames(frontLayoutClasses.header, styles.header)} fixed z-90 max-w-[100vw]`}>
       <div className={classnames(frontLayoutClasses.navbar, styles.navbar, { [styles.headerScrolled]: trigger })}>
         <div className={classnames(frontLayoutClasses.navbarContent, styles.navbarContent)}>
-          {isBelowLgScreen ? (
+        {isBelowLgScreen ? (
             <div className='flex items-center gap-2 sm:gap-4'>
 
               <FrontMenu mode={mode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
@@ -69,14 +69,14 @@ const Header = ({ mode, setIsLoading }: { mode: Mode, setIsLoading: Dispatch<Set
             <div className="flex items-center gap-10">
               <Link href='/landing'>
 
-                 <img
-                src="/images/logos.png"
-                alt="Company Logo"
-                width="10"
-                height="5"
-                className="w-auto h-[4rem] max-w-full"
-                sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
-              />
+                <img
+                  src="/images/logos.png"
+                  alt="Company Logo"
+                  width="10"
+                  height="5"
+                  className="w-auto h-[4rem] max-w-full"
+                  sizes="(max-width: 768px) 7px, (max-width: 1200px) 24px, 32px"
+                />
               </Link>
 
             </div>

@@ -89,7 +89,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`language-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box component="div" sx={{ p: 3 }}>{children}</Box>}
     </div>
   )
 }
@@ -355,7 +355,7 @@ const FaqManagement = () => {
               Are you sure you want to delete this FAQ? This action cannot be undone.
             </Typography>
             {selectedFaq && (
-              <Box sx={{ mt: 2 }}>
+              <Box component="div" sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" color="text.primary">
                   Question: {selectedFaq.translations?.en?.question || 'N/A'}
                 </Typography>
@@ -376,7 +376,7 @@ const FaqManagement = () => {
       <>
         <DialogTitle>{dialogMode === 'create' ? 'Create New FAQ' : 'Edit FAQ'}</DialogTitle>
         <DialogContent>
-          <Box sx={{ mb: 4, mt: 2 }}>
+          <Box component="div" sx={{ mb: 4, mt: 2 }}>
             <FormControl fullWidth>
               <InputLabel id="categories-label">Categories</InputLabel>
               <Select
@@ -386,7 +386,7 @@ const FaqManagement = () => {
                 onChange={handleCategoryChange as any} // This will update the categories in the formData
                 input={<OutlinedInput label="Categories" />}
                 renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  <Box component="div" sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {(selected as string[]).map((value) => (
                       <Chip key={value} label={value} />
                     ))}
@@ -412,8 +412,8 @@ const FaqManagement = () => {
             </FormControl>
           </Box>
 
-          <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box component="div" sx={{ width: '100%' }}>
+            <Box component="div" sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={activeTab} onChange={handleTabChange} aria-label="language tabs">
                 {availableLanguages.map((lang, index) => (
                   <Tab key={lang.code} label={lang.name} {...getTabProps(index)} />
@@ -468,7 +468,7 @@ const FaqManagement = () => {
     <>
       <Card>
         <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Box component="div" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
             <Typography variant="h5" component="h1">
               FAQ Management
             </Typography>
@@ -482,7 +482,7 @@ const FaqManagement = () => {
           </Box>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+            <Box component="div" sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
               <CircularProgress />
             </Box>
           ) : (
@@ -510,14 +510,14 @@ const FaqManagement = () => {
                           {truncateText(faq.translations?.en?.question)}
                         </TableCell>
                         <TableCell>
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          <Box component="div" sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                             {faq.categories?.map((category) => (
                               <Chip key={category} label={category} size="small" />
                             )) || 'N/A'}
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <Box component="div" sx={{ display: 'flex', gap: 0.5 }}>
                             {Object.keys(faq.translations || {}).map((langCode) => (
                               <Chip
                                 key={langCode}
@@ -575,7 +575,7 @@ const FaqManagement = () => {
           horizontal: 'left',
         }}
       >
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box component="div" sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
           <TextField
             label="New Category"
             size="small"

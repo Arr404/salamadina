@@ -1,7 +1,8 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import type { RefObject, ChangeEvent } from 'react'
 
 // Next Imports
 import { useRouter } from 'next/navigation'
@@ -21,6 +22,8 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 // Third-party Imports
 import classnames from 'classnames'
+import ReCAPTCHA from 'react-google-recaptcha'
+import type { ReCAPTCHAProps } from 'react-google-recaptcha'
 
 // Firebase Imports
 import { initializeApp } from 'firebase/app'
@@ -89,6 +92,10 @@ const MaskImg = styled('img')({
   zIndex: -1
 })
 
+// Rate limiting variables
+const MAX_FAILED_ATTEMPTS = 3
+const LOCKOUT_TIME = 30 * 60 * 1000 // 30 minutes in milliseconds
+
 const LoginV2 = () => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
@@ -98,6 +105,13 @@ const LoginV2 = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const [isLocked, setIsLocked] = useState(false)
+  const [lockoutEndTime, setLockoutEndTime] = useState(0)
+  const [showCaptcha, setShowCaptcha] = useState(false)
+
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
 
   // Vars
   const darkImg = '/images/pages/auth-mask-dark.png'
@@ -110,22 +124,136 @@ const LoginV2 = () => {
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const authBackground = useImageVariant("light", lightImg, darkImg)
 
+  // Check if account is locked on load and setup timer if needed
+  useEffect(() => {
+    const storedLockTime = localStorage.getItem('accountLockTime')
+    const storedFailedAttempts = localStorage.getItem('failedLoginAttempts')
+
+    if (storedFailedAttempts) {
+      setFailedAttempts(parseInt(storedFailedAttempts))
+
+      // Show captcha after certain number of attempts
+      if (parseInt(storedFailedAttempts) >= 2) {
+        setShowCaptcha(true)
+      }
+    }
+
+    if (storedLockTime) {
+      const lockTime = parseInt(storedLockTime)
+      if (lockTime > Date.now()) {
+        setIsLocked(true)
+        setLockoutEndTime(lockTime)
+
+        // Set a timer to unlock
+        const timerId = setTimeout(() => {
+          setIsLocked(false)
+          localStorage.removeItem('accountLockTime')
+        }, lockTime - Date.now())
+
+        return () => clearTimeout(timerId)
+      } else {
+        localStorage.removeItem('accountLockTime')
+      }
+    }
+  }, [])
+
+  // Update remaining lockout time
+  useEffect(() => {
+    let interval: string | number | NodeJS.Timeout | undefined
+    if (isLocked && lockoutEndTime > Date.now()) {
+      interval = setInterval(() => {
+        if (lockoutEndTime <= Date.now()) {
+          setIsLocked(false)
+          localStorage.removeItem('accountLockTime')
+          clearInterval(interval)
+        }
+      }, 1000)
+    }
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [isLocked, lockoutEndTime])
+
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const handleLogin = (e : any) => {
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value)
+  }
+
+  const incrementFailedAttempts = () => {
+    const newCount = failedAttempts + 1
+    setFailedAttempts(newCount)
+    localStorage.setItem('failedLoginAttempts', newCount.toString())
+
+    // Show captcha after 2 failed attempts
+    if (newCount >= 2) {
+      setShowCaptcha(true)
+    }
+
+    // Lock account after MAX_FAILED_ATTEMPTS
+    if (newCount >= MAX_FAILED_ATTEMPTS) {
+      const lockoutEnd = Date.now() + LOCKOUT_TIME
+      setIsLocked(true)
+      setLockoutEndTime(lockoutEnd)
+      localStorage.setItem('accountLockTime', lockoutEnd.toString())
+    }
+  }
+
+  const resetFailedAttempts = () => {
+    setFailedAttempts(0)
+    localStorage.removeItem('failedLoginAttempts')
+    setShowCaptcha(false)
+  }
+
+  const getLockoutTimeRemaining = () => {
+    const remainingMs = lockoutEndTime - Date.now()
+    if (remainingMs <= 0) return '0 seconds'
+
+    const minutes = Math.floor(remainingMs / 60000)
+    const seconds = Math.floor((remainingMs % 60000) / 1000)
+
+    return `${minutes} minutes and ${seconds} seconds`
+  }
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    // Check if account is locked
+    if (isLocked) {
+      setError(`Too many failed attempts. Account is locked for ${getLockoutTimeRemaining()}.`)
+      return
+    }
+
+    // Validate captcha if shown
+    if (showCaptcha && !captchaValue) {
+      setError('Please complete the reCAPTCHA verification')
+      return
+    }
+
     setIsLoading(true)
     setError('')
+
+    // In a real implementation, you would verify the captcha token on the server-side
+    // For this example, we'll simulate the captcha verification as successful
 
     const authPromise = loginWithEmailPassword(email, password)
 
     authPromise
       .then(() => {
+        resetFailedAttempts() // Reset counter on successful login
         router.push('/admin/gallery')
       })
       .catch((error) => {
         console.error('Authentication error:', error)
         setError(error.message || 'Authentication failed. Please try again.')
+        incrementFailedAttempts()
+
+        // Reset captcha
+        if (recaptchaRef.current) {
+          recaptchaRef.current.reset()
+          setCaptchaValue(null)
+        }
       })
       .finally(() => {
         setIsLoading(false)
@@ -133,16 +261,24 @@ const LoginV2 = () => {
   }
 
   const handleGoogleSignIn = () => {
+    // Check if account is locked
+    if (isLocked) {
+      setError(`Too many failed attempts. Account is locked for ${getLockoutTimeRemaining()}.`)
+      return
+    }
+
     setIsLoading(true)
     setError('')
 
     loginWithGoogle()
       .then(() => {
+        resetFailedAttempts() // Reset counter on successful login
         router.push('/admin/gallery')
       })
       .catch((error) => {
         console.error('Google Sign-in error:', error)
         setError(error.message || 'Google sign-in failed. Please try again.')
+        incrementFailedAttempts()
       })
       .finally(() => {
         setIsLoading(false)
@@ -219,6 +355,13 @@ const LoginV2 = () => {
 
           {error && <Alert severity="error">{error}</Alert>}
 
+          {isLocked && (
+            <Alert severity="warning">
+              Account temporarily locked due to too many failed attempts.
+              Please try again in {getLockoutTimeRemaining()}.
+            </Alert>
+          )}
+
           <form
             noValidate
             autoComplete='off'
@@ -231,7 +374,8 @@ const LoginV2 = () => {
               label='Email'
               placeholder='Enter your email'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              disabled={isLocked}
             />
             <CustomTextField
               fullWidth
@@ -240,7 +384,8 @@ const LoginV2 = () => {
               id='outlined-adornment-password'
               type={isPasswordShown ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              disabled={isLocked}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>
@@ -251,9 +396,20 @@ const LoginV2 = () => {
                 )
               }}
             />
+
+            {showCaptcha && (
+              <div className="flex justify-center my-2">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
+                  onChange={handleCaptchaChange}
+                />
+              </div>
+            )}
+
             <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
               <FormControlLabel
-                control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />}
+                control={<Checkbox checked={rememberMe} onChange={(e: ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)} disabled={isLocked} />}
                 label='Remember me'
               />
               <Typography
@@ -268,12 +424,10 @@ const LoginV2 = () => {
               fullWidth
               variant='contained'
               type='submit'
-              disabled={isLoading}
+              disabled={isLoading || isLocked || (showCaptcha && !captchaValue)}
             >
               {isLoading ? <CircularProgress size={24} /> : isSignUp ? 'Sign Up' : 'Login'}
             </Button>
-
-
           </form>
         </div>
       </div>

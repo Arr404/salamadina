@@ -82,7 +82,7 @@ const Video = () => {
   }, [])
 
   return (
-    <section className='plb-[84px] bg-backgroundPaper'>
+    <section className='py-8 plb-[84px] bg-backgroundPaper'>
       <div className='flex flex-col gap-y-4 items-center justify-center'>
         <Chip size='small' className="text-white bg-[#811745]" variant='tonal' color='primary' label='Video' />
         <div className='flex flex-col items-center gap-y-1 justify-center flex-wrap'>

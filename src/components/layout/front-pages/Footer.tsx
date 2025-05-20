@@ -38,7 +38,7 @@ const Footer = ({ mode }: { mode: Mode }) => {
   const dashboardImage = useImageVariant(mode, footerImageLight, footerImageDark)
 
   return (
-    <footer className={frontLayoutClasses.footer}>
+    <footer className='max-w-full'>
       <div className='relative bg-[#811745]'>
         <div className={classnames('plb-12 text-white', frontCommonStyles.layoutSpacing)}>
           <Grid container rowSpacing={10} columnSpacing={12}>

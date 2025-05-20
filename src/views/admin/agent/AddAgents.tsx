@@ -388,7 +388,7 @@ const AddAgents = () => {
           <>
             <Grid item xs={12} className='flex flex-col items-center'>
               {imagePreview && (
-                <Box className='mb-4'>
+                <Box component="div" className='mb-4'>
                   <Avatar
                     src={imagePreview}
                     alt="Agent Preview"
@@ -533,7 +533,7 @@ const AddAgents = () => {
           </Typography>
 
           {loading ? (
-            <Box className='flex justify-center p-6'>
+            <Box component="div" className='flex justify-center p-6'>
               <CircularProgress />
             </Box>
           ) : agents.length === 0 ? (

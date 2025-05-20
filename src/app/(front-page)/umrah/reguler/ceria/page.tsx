@@ -2,7 +2,7 @@
 import UmrahWrapper from '@views/umrah'
 
 function UmrahPage() {
-  return <UmrahWrapper selectedPackageTypeProps={'Umrah Ceria'}/>
+  return <UmrahWrapper packageType={'Umrah Reguler'} selectedPackageTypeProps={'Umrah Ceria'}/>
 }
 
 export default UmrahPage

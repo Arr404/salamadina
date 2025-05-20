@@ -2,7 +2,7 @@
 import HajiWrapper from '@views/umrah/HajiWrapper'
 
 function HajiPage() {
-  return <HajiWrapper />
+  return <HajiWrapper packageType={'Haji Kuota'} selectedPackageTypeProps={'Silver'}/>
 }
 
 export default HajiPage

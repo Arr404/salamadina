@@ -6,6 +6,7 @@ import type { ReactElement, ReactNode, SyntheticEvent } from 'react'
 
 // Next Imports
 import Link from 'next/link'
+import type { LinkProps } from 'next/link'
 
 // MUI Imports
 import Tooltip from '@mui/material/Tooltip'
@@ -37,8 +38,13 @@ const IconButtonWrapper = (props: Pick<OptionsMenuType, 'tooltipProps'> & { chil
 
 const MenuItemWrapper = ({ children, option }: { children: ReactNode; option: OptionMenuItemType }) => {
   if (option.href) {
+    // Fix the type issue by using explicit type for linkProps
     return (
-      <Box component={Link} href={option.href} {...option.linkProps}>
+      <Box
+        component={Link}
+        href={option.href}
+        {...(option.linkProps as Partial<LinkProps>)}
+      >
         {children}
       </Box>
     )

@@ -53,7 +53,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`package-details-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box component="div" sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -559,7 +559,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <Box component="div" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
         <CircularProgress />
       </Box>
     );
@@ -568,7 +568,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
       {/* Language Switch UI */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+      <Box component="div" sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <FormControl size="small">
           <InputLabel id="language-select-label">{t.languageLabel}</InputLabel>
           <Select
@@ -617,7 +617,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                     <Typography variant="body2">
                       Price: IDR {packageInfo.price.toLocaleString('id-ID')}
                     </Typography>
@@ -635,12 +635,12 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
         )}
 
         {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <Box component="div" sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
             <CircularProgress />
           </Box>
         ) : (
           <form onSubmit={handleSubmit}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+            <Box component="div" sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
               <Tabs
                 value={tabValue}
                 onChange={handleTabChange}
@@ -735,12 +735,12 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
 
             {/* Inclusions & Exclusions Tab */}
             <TabPanel value={tabValue} index={1}>
-              <Box sx={{ mb: 4 }}>
+              <Box component="div" sx={{ mb: 4 }}>
                 <Typography variant="h6" gutterBottom>
                   {t.includedItems}
                 </Typography>
                 {getCurrentLanguageData().includedItems?.map((item, index) => (
-                  <Box key={`included-${index}`} sx={{ display: 'flex', mb: 2 }}>
+                  <Box component="div" key={`included-${index}`} sx={{ display: 'flex', mb: 2 }}>
                     <TextField
                       fullWidth
                       label={`${t.includedItems} ${index + 1}`}
@@ -769,12 +769,12 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
 
               <Divider sx={{ my: 3 }} />
 
-              <Box>
+              <Box component="div">
                 <Typography variant="h6" gutterBottom>
                   {t.excludedItems}
                 </Typography>
                 {getCurrentLanguageData().excludedItems?.map((item, index) => (
-                  <Box key={`excluded-${index}`} sx={{ display: 'flex', mb: 2 }}>
+                  <Box component="div" key={`excluded-${index}`} sx={{ display: 'flex', mb: 2 }}>
                     <TextField
                       fullWidth
                       label={`${t.excludedItems} ${index + 1}`}
@@ -856,7 +856,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                         />
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
+                        <Box component="div" sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
                           <Button
                             variant="outlined"
                             color="error"
@@ -926,7 +926,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                           {t.activity}
                         </Typography>
                         {day.activities?.map((activity, activityIndex) => (
-                          <Box key={`activity-${activityIndex}`} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                          <Box component="div" key={`activity-${activityIndex}`} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <TextField
                               fullWidth
                               label={`${t.activity} ${activityIndex + 1}`}
@@ -954,7 +954,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                         </Button>
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Box component="div" sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                           <Button
                             variant="outlined"
                             color="error"
@@ -991,7 +991,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                       {t.requirements || 'Requirements'}
                     </Typography>
                     {getCurrentLanguageData().requirements?.map((req, index) => (
-                      <Box key={`requirement-${index}`} sx={{ display: 'flex', mb: 2 }}>
+                      <Box component="div" key={`requirement-${index}`} sx={{ display: 'flex', mb: 2 }}>
                         <TextField
                           fullWidth
                           label={`${t.requirement || 'Requirement'} ${index + 1}`}
@@ -1024,7 +1024,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                       {t.terms || 'Terms'}
                     </Typography>
                     {getCurrentLanguageData().terms?.map((term, index) => (
-                      <Box key={`term-${index}`} sx={{ display: 'flex', mb: 2 }}>
+                      <Box component="div" key={`term-${index}`} sx={{ display: 'flex', mb: 2 }}>
                         <TextField
                           fullWidth
                           label={`${t.term || 'Term'} ${index + 1}`}
@@ -1078,7 +1078,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
                           onChange={(e) => handleFacilityChange(index, 'description', e.target.value)}
                           margin="normal"
                         />
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+                        <Box component="div" sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
                           <IconButton
                             color="error"
                             onClick={() => handleRemoveFacility(index)}
@@ -1102,7 +1102,7 @@ export default function PackageDetailsEditor({ packageId, tipePaket }: { package
             </TabPanel>
 
             {/* Save Button */}
-            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+            <Box component="div" sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 variant="outlined"
                 onClick={() => window.history.back()}

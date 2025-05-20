@@ -60,7 +60,7 @@ export const ImageSelectionModal: React.FC<ImageSelectionModalProps> = ({ open, 
       <DialogTitle>Select an Image</DialogTitle>
       <DialogContent>
         {/* Upload Button */}
-        <Box display="flex" justifyContent="flex-end" mb={2}>
+        <Box component="div" display="flex" justifyContent="flex-end" mb={2}>
           <Button
             variant="outlined"
             component="label"
@@ -84,7 +84,7 @@ export const ImageSelectionModal: React.FC<ImageSelectionModalProps> = ({ open, 
         <Grid container spacing={2}>
           {images.map((image) => (
             <Grid item xs={4} key={image.public_id}>
-              <Box position="relative">
+              <Box component="div" position="relative">
                 <Box
                   component="img"
                   src={image.secure_url}

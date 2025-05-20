@@ -157,13 +157,13 @@ export const TestimonialSlider = () => {
         </div>
       </div>
 
-      <div className='w-full md:w-[70%]'>
+      <div className='w-full px-4 sm:px-6 max-w-sm md:max-w-2xl md:ml-[12vw] mx-auto'>
         <AppKeenSlider>
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden max-w-full">
             <div ref={sliderRef} className="keen-slider">
               {testimonials.map((item, index) => (
-                <div key={index} className="keen-slider__slide">
-                  <Card elevation={3} className="h-full">
+                <div key={index} className="keen-slider__slide ">
+                  <Card elevation={3} className="h-full ">
                     <CardContent className="p-6">
                       <div className="flex flex-col gap-4 h-full">
                         <div className="testimonial-content overflow-auto max-h-40">

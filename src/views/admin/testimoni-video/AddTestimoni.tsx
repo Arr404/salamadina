@@ -128,7 +128,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box component="div" sx={{ p: 3 }}>
           {children}
         </Box>
       )}
@@ -357,7 +357,7 @@ const AddTestimoni = () => {
   const renderVideoList = () => {
     if (loading) {
       return (
-        <Box display="flex" justifyContent="center" alignItems="center" p={4}>
+        <Box component="div" display="flex" justifyContent="center" alignItems="center" p={4}>
           <CircularProgress />
         </Box>
       )
@@ -365,7 +365,7 @@ const AddTestimoni = () => {
 
     if (videos.length === 0) {
       return (
-        <Box p={4} textAlign="center">
+        <Box component="div" p={4} textAlign="center">
           <Typography>No testimonial videos found. Add your first video!</Typography>
         </Box>
       )
@@ -378,7 +378,7 @@ const AddTestimoni = () => {
             key={video.id}
             divider
             secondaryAction={
-              <Box>
+              <Box component="div">
                 <IconButton
                   edge="end"
                   onClick={() => handleEditVideo(video.id)}
@@ -527,7 +527,7 @@ const AddTestimoni = () => {
 
         <TabPanel value={tabValue} index={1}>
           <CardContent>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+            <Box component="div" display="flex" justifyContent="space-between" alignItems="center" mb={3}>
               <Typography variant="h6">Testimonial Videos</Typography>
               <Button
                 variant="contained"

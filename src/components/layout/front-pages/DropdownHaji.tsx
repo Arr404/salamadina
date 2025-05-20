@@ -56,6 +56,7 @@ const menuData =
   [
     {
       title: 'Haji Khusus Kuota',
+      href: '/haji/kuota',
       icon: 'tabler-layout-grid',
       items: [
         { title: 'Gold', href: '/haji/kuota/gold' },
@@ -64,6 +65,7 @@ const menuData =
     },
     {
       title: 'Haji Furoda/Mujamalah',
+      href:  '/haji/furoda',
       icon: 'tabler-layout-grid',
       items: [
         { title: 'Gold', href: '/haji/furoda/gold' },
@@ -242,7 +244,14 @@ const DropdownEdutrip = (props: Props) => {
                 <CustomAvatar variant='rounded' color='primary' skin='light'>
                   <i className={menu.icon} />
                 </CustomAvatar>
-                <Typography variant='h6'>{menu.title}</Typography>
+                <Link
+                  key={menuIndex}
+                  href={menu.href}
+                  className={classnames('', { 'text-primary': pathname?.includes(menu.href) })}
+                  onClick={handleLinkClick}
+                >
+                  <Typography variant='h6'>{menu.title}</Typography>
+                </Link>
               </div>
               {menu.items.map((item, itemIndex) => (
                 <Link

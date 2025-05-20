@@ -63,7 +63,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`testimonial-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box component="div" sx={{ p: 3 }}>{children}</Box>}
     </div>
   )
 }
@@ -261,7 +261,7 @@ const TestimonialManagement = () => {
     <>
       <Card>
         <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Box component="div" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
             <Typography variant="h6" component="h2">
               Testimonial Management
             </Typography>
@@ -270,7 +270,7 @@ const TestimonialManagement = () => {
             </Button>
           </Box>
 
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box component="div" sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange} aria-label="testimonial management tabs">
               <Tab label="All Testimonials" />
               <Tab label="Preview" />
@@ -343,9 +343,9 @@ const TestimonialManagement = () => {
                 <Grid item xs={12} md={6} key={testimonial.id}>
                   <Card>
                     <CardContent>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                      <Box component="div" sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                         <CustomAvatar src={testimonial.avatarSrc} alt={testimonial.name} sx={{ mr: 2 }} />
-                        <Box>
+                        <Box component="div">
                           <Typography variant="subtitle1">{testimonial.name}</Typography>
                           <Typography variant="body2" color="text.secondary">
                             {testimonial.position}
@@ -455,7 +455,7 @@ const TestimonialManagement = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+              <Box component="div" sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography component="legend">Testimonial Description</Typography>
                 <Button size="small" onClick={handleToggleLanguage}>
                   Switch to {dialogLanguage === 'en' ? 'Indonesian' : 'English'}
@@ -495,9 +495,9 @@ const TestimonialManagement = () => {
             Testimonial Details
           </DialogTitle>
           <DialogContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+            <Box component="div" sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <CustomAvatar src={currentTestimonial.avatarSrc} alt={currentTestimonial.name} sx={{ width: 64, height: 64, mr: 2 }} />
-              <Box>
+              <Box component="div">
                 <Typography variant="h6">{currentTestimonial.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
                   {currentTestimonial.position}

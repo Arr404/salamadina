@@ -657,7 +657,7 @@ const UmrahPackagesManagement: React.FC<Props> = (props) => {
                     <Grid item xs={12} md={6} key={index}>
                       <Card variant="outlined" sx={{ height: '100%' }}>
                         <CardContent>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <FormControl fullWidth variant="outlined">
                               <TextField
                                 fullWidth
@@ -750,7 +750,7 @@ const UmrahPackagesManagement: React.FC<Props> = (props) => {
                     <Grid item xs={12} md={6} key={index}>
                       <Card variant="outlined" sx={{ height: '100%' }}>
                         <CardContent>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <FormControl fullWidth variant="outlined">
                               <TextField
                                 fullWidth
@@ -950,7 +950,7 @@ const UmrahPackagesManagement: React.FC<Props> = (props) => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Language Selector */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+      <Box component="div" sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
         <FormControl size="small">
           <InputLabel id="language-select-label">{t.languageLabel}</InputLabel>
           <Select

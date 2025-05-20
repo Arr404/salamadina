@@ -17,13 +17,14 @@ import {
   useRole,
   useInteractions,
   useHover,
+  useClick, // Add this import
   offset,
   flip,
   size,
   autoUpdate,
   FloatingPortal,
   safePolygon,
-  useTransitionStyles
+  useTransitionStyles, shift
 } from '@floating-ui/react'
 
 // Type Imports
@@ -142,8 +143,10 @@ const DropdownUmroh = (props: Props) => {
           })
         },
         padding: 10
-      })
+      }),
+      shift({ padding: 10 })
     ]
+
   })
 
   // Floating UI Transition Styles
@@ -167,16 +170,21 @@ const DropdownUmroh = (props: Props) => {
 
   const hover = useHover(context, {
     handleClose: safePolygon({
-      blockPointerEvents: true
+      blockPointerEvents: true,
+      buffer: 8
     }),
     restMs: 25,
     delay: { open: 75 }
   })
 
+  // Add click interaction
+  const click = useClick(context)
+
   const dismiss = useDismiss(context)
   const role = useRole(context, { role: 'menu' })
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, role, hover])
+  // Include the click interaction in the interactions array
+  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, role, hover, click])
 
   const Tag = isBelowLgScreen ? 'div' : Fragment
 
@@ -188,11 +196,16 @@ const DropdownUmroh = (props: Props) => {
     }
   }
 
+  // Handle click for both screen sizes
+  const handleDropdownClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  }
+
   useEffect(() => {
     if (!isDrawerOpen && isOpen) {
       setIsOpen(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDrawerOpen])
 
   return (
@@ -205,15 +218,19 @@ const DropdownUmroh = (props: Props) => {
           { 'text-primary': ['/front-pages/payment', '/front-pages/pricing', '/front-pages/checkout', '/front-pages/umrah', '/front-pages/umrah/article/package-detail'].includes(pathname? pathname:'') }
         )}
         {...(isBelowLgScreen
-          ? { onClick: (e : any) => { e.preventDefault(); setIsOpen(!isOpen); } }
-          : { ref: refs.setReference, ...getReferenceProps() })}
+          ? { onClick: handleDropdownClick }
+          : {
+            ref: refs.setReference,
+            ...getReferenceProps(),
+            onClick: handleDropdownClick // Add click handler here as well
+          })}
       >
         <span>Umroh</span>
         <i className={classnames('text-xl', { 'tabler-chevron-down': !isBelowLgScreen || (isBelowLgScreen && !isOpen), 'tabler-chevron-up': isBelowLgScreen && isOpen })} />
       </Typography>
 
-      <MenuWrapper {...{ refs, isBelowLgScreen, isOpen, getFloatingProps, top: y ? y - window.scrollY : 0, floatingStyles, isMounted, styles }}>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4'>
+      <MenuWrapper {...{ refs, isBelowLgScreen, isOpen, getFloatingProps, top: y ? y - window.scrollY + 100 : 100, floatingStyles, isMounted, styles }} >
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 z-[999]'>
           {[
             {
               title: 'Umrah Reguler',

@@ -1,4 +1,5 @@
 export default function LoadingWrapper() {
+  console.log('loading')
   return (
     <div
       className="fixed inset-0 z-[9999] min-h-screen w-screen bg-gradient-to-br from-[#901D57] to-[#B71E7E] flex items-center justify-center"

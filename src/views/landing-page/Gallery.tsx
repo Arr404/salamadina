@@ -1,194 +1,269 @@
 'use client'
 
-// React Imports
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import Typography from '@mui/material/Typography'
+import Chip from '@mui/material/Chip'
+import Link from 'next/link'
 
-import { motion, AnimatePresence } from "framer-motion";
+type Categories = {
+  [category: string]: string[]
+}
 
-// MUI Imports
-import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
+// Organize images into categories based on their folder paths
+const organizeImagesByCategory = (images: string[]): Categories => {
+  const categories: Categories = {}
 
-
-const images = [
-  "images/gallery/3 Februari/IMG-20250205-WA0051.jpg",
-  "images/gallery/3 Februari/IMG-20250205-WA0068.jpg",
-  "images/gallery/3 Februari/IMG-20250205-WA0074.jpg",
-  "images/gallery/3 Februari/IMG-20250205-WA0093.jpg",
-  "images/gallery/3 Februari/IMG-20250206-WA0018.jpg",
-  "images/gallery/3 Februari/IMG-20250206-WA0019.jpg",
-  "images/gallery/3 Februari/IMG-20250206-WA0079.jpg",
-  "images/gallery/3 Februari/IMG-20250206-WA0083.jpg",
-  "images/gallery/3 Februari/IMG-20250206-WA0092.jpg",
-  "images/gallery/3 Februari/IMG-20250206-WA0143.jpg",
-  "images/gallery/3 Februari/IMG-20250208-WA0095.jpg",
-  "images/gallery/3 Februari/IMG-20250209-WA0007.jpg",
-  "images/gallery/3 Februari/IMG-20250209-WA0020.jpg",
-  "images/gallery/3 Februari/IMG-20250209-WA0039.jpg",
-  "images/gallery/3 Februari/IMG-20250209-WA0051.jpg",
-  "images/gallery/3 Februari/IMG-20250211-WA0004.jpg",
-  "images/gallery/3 Februari/WhatsApp Image 2025-02-09 at 07.57.10_7f459ee6.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241009-WA0026.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241009-WA0054.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241010-WA0014.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241014-WA0051.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241015-WA0005.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241108-WA0032.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/IMG-20241108-WA0035.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/WhatsApp Image 2023-05-11 at 19.58.22.jpeg",
-  "images/gallery/5 oktober 24 umroh corporate/WhatsApp Image 2024-11-07 at 15.05.51_998b0c75.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/WhatsApp Image 2024-11-07 at 15.14.43_b685204a.jpg",
-  "images/gallery/5 oktober 24 umroh corporate/WhatsApp Image 2024-11-07 at 15.21.18_1c49e39e.jpg",
-  "images/gallery/19 Desember/IMG-20241222-WA0043.jpg",
-  "images/gallery/19 Desember/IMG-20241223-WA0034.jpg",
-  "images/gallery/19 Desember/IMG-20241223-WA0035.jpg",
-  "images/gallery/19 Desember/IMG-20241224-WA0050.jpg",
-  "images/gallery/19 Desember/IMG-20241224-WA0055.jpg",
-  "images/gallery/19 Desember/IMG-20241227-WA0034.jpg",
-  "images/gallery/19 Desember/IMG-20241228-WA0043.jpg",
-  "images/gallery/19 Desember/IMG-20241228-WA0045.jpg",
-  "images/gallery/19 Desember/IMG-20241228-WA0047.jpg",
-  "images/gallery/19 Desember/IMG-20241228-WA0054.jpg",
-  "images/gallery/19 Desember/IMG-20241228-WA0055.jpg",
-  "images/gallery/19 Desember/WhatsApp Image 2024-12-23 at 19.20.39_2e0a8a1a.jpg",
-  "images/gallery/19 Desember/WhatsApp Image 2024-12-23 at 19.20.40_fc46fd99.jpg",
-  "images/gallery/19 Desember/WhatsApp Image 2024-12-28 at 17.24.58_8781c8a3.jpg",
-  "images/gallery/22 Januari/IMG-20250129-WA0107.jpg",
-  "images/gallery/22 Januari/IMG-20250201-WA0080.jpg",
-  "images/gallery/22 Januari/IMG-20250202-WA0001.jpg",
-  "images/gallery/28 Januari/IMG-20250201-WA0057.jpg",
-  "images/gallery/28 Januari/IMG-20250204-WA0059.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-02 at 20.34.36_0244155c.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-03 at 09.20.35_166533e2.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-03 at 09.20.38_d1d9c67d.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-03 at 09.20.39_82bc6ee4.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-03 at 09.20.40_f13273f8.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-07 at 13.02.58_dd12cd61.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-07 at 13.14.36_614600d9.jpg",
-  "images/gallery/28 Januari/WhatsApp Image 2025-02-07 at 13.16.32_447f54cc.jpg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-06-25 at 00.00.13.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-06-28 at 14.55.46.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-06-28 at 14.55.49.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-06-28 at 14.56.16.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-07-05 at 12.59.03.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-07-10 at 23.54.52 (1).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2023-07-11 at 21.05.27.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.20 (1).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.20 (2).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.20 (3).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.21.jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.21 (1).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.21 (2).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.22 (1).jpeg",
-  "images/gallery/Haji 2023/WhatsApp Image 2024-09-29 at 05.49.23.jpeg"
-];
-
-
-const Gallery = () => {
-  const ref = useRef<null | HTMLDivElement>(null);
-  const [lightbox, setLightbox] = useState<null | number>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [batch, setBatch] = useState<{ img: string; span: number }[]>([]);
-  const [count, setCount] = useState(0);
-
-  const getRowSpan = () => (Math.random() > 0.5 ? 2 : 1);
-
-  const calculateBatchSize = (startIndex: number) => {
-    let count = 0;
-    let rowsUsed = 0;
-    const newBatch: { img: string; span: number }[] = [];
-
-    for (let i = startIndex; i < images.length; i++) {
-      if (rowsUsed >= 16) break;
-      const span = getRowSpan();
-
-      if (rowsUsed + span > 16) break;
-
-      rowsUsed += span;
-      newBatch.push({ img: images[i], span });
-      count++;
+  images.forEach((img) => {
+    const parts = img.split('/')
+    if (parts.length >= 3) {
+      const category = parts[2]
+      if (!categories[category]) {
+        categories[category] = []
+      }
+      categories[category].push(img)
     }
+  })
 
-    return { newBatch, count };
-  };
+  return categories
+}
 
-// Recalculate batch and count when currentIndex changes
+const GalleryLanding = ({ images }: { images: string[] }) => {
+  const [currentCategory, setCurrentCategory] = useState<string>('')
+  const [displayImages, setDisplayImages] = useState<string[]>([])
+  const [lightboxOpen, setLightboxOpen] = useState<boolean>(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
+  const [categories, setCategories] = useState<Categories>({})
+  const [categoryList, setCategoryList] = useState<string[]>([])
+  const [animationDirection, setAnimationDirection] = useState<number>(1)
+
   useEffect(() => {
-    const { newBatch, count } = calculateBatchSize(currentIndex);
+    if (!images || images.length === 0) return
 
-    setBatch(newBatch);
-    setCount(count);
-  }, [currentIndex]);
+    const categorizedImages = organizeImagesByCategory(images)
+    setCategories(categorizedImages)
 
-  const nextImages = () => {
-    setDirection(1);
-    setCurrentIndex((prev) => (prev + count) % images.length);
-  };
+    const catList = Object.keys(categorizedImages)
+    setCategoryList(catList)
 
-  const prevImages = () => {
-    setDirection(-1);
-    setCurrentIndex((prev) => (prev - count + images.length) % images.length);
-  };
+    if (catList.length > 0) {
+      setCurrentCategory(catList[0])
+      setDisplayImages(categorizedImages[catList[0]].slice(0, 8))
+    }
+  }, [images])
 
+  const changeCategory = (category: string) => {
+    setAnimationDirection(1)
+    setCurrentCategory(category)
+    setDisplayImages(categories[category].slice(0, 8))
+  }
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index)
+    setLightboxOpen(true)
+  }
+
+  const navigateLightbox = (direction: number) => {
+    const categoryImages = categories[currentCategory]
+    const newIndex =
+      (currentImageIndex + direction + categoryImages.length) % categoryImages.length
+    setCurrentImageIndex(newIndex)
+  }
+
+  const rotateImages = (direction: number) => {
+    setAnimationDirection(direction)
+    const categoryImages = categories[currentCategory]
+
+    if (direction > 0) {
+      const nextBatch: string[] = []
+      const startIndex = (categoryImages.indexOf(displayImages[displayImages.length - 1]) + 1) % categoryImages.length
+      for (let i = 0; i < 8; i++) {
+        const index = (startIndex + i) % categoryImages.length
+        nextBatch.push(categoryImages[index])
+      }
+      setDisplayImages(nextBatch)
+    } else {
+      const prevBatch: string[] = []
+      const startIndex = (categoryImages.indexOf(displayImages[0]) - 8 + categoryImages.length) % categoryImages.length
+      for (let i = 0; i < 8; i++) {
+        const index = (startIndex + i) % categoryImages.length
+        prevBatch.push(categoryImages[index])
+      }
+      setDisplayImages(prevBatch)
+    }
+  }
+
+  const formatImageName = (path: string) => {
+    const name = path.split('/').pop() || ''
+    return name.length > 30 ? name.substring(0, 30) + '...' : name
+  }
 
   return (
-    <section id="gallery" ref={ref} className="relative h-[600px] flex items-center justify-center text-center overflow-hidden">
-      {/* Previous Button */}
-      <button onClick={prevImages} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white w-10 h-10 flex items-center justify-center rounded-full z-10">
-        <i className='tabler-caret-left' />
-      </button>
+    <section id="gallery" className="relative py-16 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <Chip size="small" color="primary" className="mb-3 text-white bg-[#811745]" label="Gallery" />
+          <Typography variant="h4" className="font-bold mb-3">
+            Explore Our <span className="text-yellow-600">Photo Gallery</span>
+          </Typography>
+          <Typography variant="body1" className="text-gray-600 max-w-xl mx-auto">
+            Browse through our collection of memorable moments and experiences.
+          </Typography>
+        </div>
 
-      <div className="absolute inset-0 overflow-hidden">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={currentIndex}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[150px]"
-            initial={{ x: direction > 0 ? "50%" : "-50%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: direction > 0 ? "-50%" : "50%", opacity: 0 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+        {/* Category Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {categoryList.map((category) => (
+            <button
+              key={category}
+              onClick={() => changeCategory(category)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                currentCategory === category
+                  ? 'bg-yellow-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {category.replace(/([A-Z])/g, ' $1').trim()}
+            </button>
+          ))}
+        </div>
+
+        {/* Gallery Grid */}
+        <div className="relative h-[500px] overflow-hidden rounded-xl mx-[10vw]">
+          <button
+            onClick={() => rotateImages(-1)}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white w-10 h-10 flex items-center justify-center rounded-full z-10 hover:bg-black/70 transition-colors"
+            aria-label="Previous images"
           >
-            {batch.map(({ img, span }, index) => (
-              <div key={index} className={`relative overflow-hidden shadow-md rounded-lg ${span === 2 ? "row-span-2": "row-span-1"}`}>
-                <img src={img} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" alt={`Image ${index}`} />
-                <button onClick={() => setLightbox(currentIndex + index)} className="absolute inset-0 flex items-center justify-center opacity-0 bg-black bg-opacity-50 text-white text-lg font-bold transition-opacity hover:opacity-100">
-                  {img.split("/").pop()}
-                </button>
-              </div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+            <ChevronLeft size={24} />
+          </button>
 
-      {/* Next Button */}
-      <button onClick={nextImages}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white w-10 h-10 flex items-center justify-center rounded-full z-10">
-        <i className="tabler-caret-right" />
-      </button>
+          <button
+            onClick={() => rotateImages(1)}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white w-10 h-10 flex items-center justify-center rounded-full z-10 hover:bg-black/70 transition-colors"
+            aria-label="Next images"
+          >
+            <ChevronRight size={24} />
+          </button>
+
+          <AnimatePresence initial={false} custom={animationDirection}>
+            <motion.div
+              key={displayImages.join('')}
+              className="grid grid-cols-2 md:grid-cols-3 gap-3 h-full"
+              initial={{ x: animationDirection > 0 ? '100%' : '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: animationDirection > 0 ? '-100%' : '100%', opacity: 0 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              {displayImages.map((img, index) => (
+                <div
+                  key={img}
+                  className={`relative overflow-hidden rounded-lg ${
+                    index === 0 || index === 7 ? 'md:row-span-2' : ''
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`Gallery image ${index + 1}`}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                  <button
+                    onClick={() =>
+                      openLightbox(categories[currentCategory]?.indexOf(img) ?? 0)
+                    }
+                    className="absolute inset-0 flex items-center justify-center opacity-0 bg-black bg-opacity-50 text-white text-sm font-medium transition-opacity hover:opacity-100"
+                  >
+                    <span className="px-3 py-1 bg-black/70 rounded-md">
+                      {formatImageName(img)}
+                    </span>
+                  </button>
+                </div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* View All Button */}
+        <div className="text-center mt-8">
+          <Link href="/gallery">
+          <button className="px-6 py-2 bg-yellow-600 text-white rounded-full shadow-md hover:bg-yellow-700 transition-colors">
+            View All Photos
+          </button>
+          </Link>
+        </div>
+      </div>
 
       {/* Lightbox */}
-      {lightbox !== null && (
-        <div className="z-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-75" onClick={() => setLightbox(null)}>
-          <div className="relative max-w-4xl w-full p-4">
-            <img src={images[lightbox]} className="w-full h-auto cursor-pointer" alt={images[lightbox]} />
-            <p className="text-white text-center text-lg mt-2">{images[lightbox].split("/").pop()}</p>
-            <button onClick={() => setLightbox(null)} className="absolute top-2 right-2 bg-gray-800 text-white w-8 h-8 flex items-center justify-center rounded-full">X</button>
-          </div>
+      {lightboxOpen && categories[currentCategory] && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setLightboxOpen(false)
+            }}
+            className="absolute top-4 right-4 text-white bg-gray-800 hover:bg-gray-700 rounded-full p-2 transition-colors duration-200 shadow-lg z-50"
+            aria-label="Close gallery"
+          >
+            <X size={24} />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              navigateLightbox(-1)
+            }}
+            className="absolute left-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors duration-200"
+            aria-label="Previous image"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              navigateLightbox(1)
+            }}
+            className="absolute right-4 text-white hover:text-gray-300 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors duration-200"
+            aria-label="Next image"
+          >
+            <ChevronRight size={24} />
+          </button>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentImageIndex}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-4xl w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-800">
+                <img
+                  src={categories[currentCategory][currentImageIndex]}
+                  alt={`Gallery image ${currentImageIndex + 1}`}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="mt-4 text-white text-center">
+                <p className="text-xl font-medium">
+                  {formatImageName(categories[currentCategory][currentImageIndex])}
+                </p>
+                <p className="text-sm text-gray-300 mt-2">
+                  {currentImageIndex + 1} of {categories[currentCategory].length}
+                </p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
-
-      {/* Text Content */}
-      <div className="bg-black bg-opacity-40 p-24 rounded-xl relative flex flex-col gap-6 items-center">
-        <Chip size="small" variant="tonal" color="primary" label="Gallery" />
-        <Typography color="white" variant="h4" className="font-bold">
-          Explore Our <span className="text-yellow-400">Photo Gallery</span>
-        </Typography>
-        <Typography className="text-white max-w-lg">Browse through these amazing photos.</Typography>
-      </div>
     </section>
-  );
-};
+  )
+}
 
-export default Gallery;
-
+export default GalleryLanding

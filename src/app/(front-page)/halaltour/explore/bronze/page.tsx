@@ -2,7 +2,7 @@
 import HalalTourWrapper from '@views/umrah/HalalTourWrapper'
 
 function HalalTourPage() {
-  return <HalalTourWrapper />
+  return <HalalTourWrapper packageType={'HalalTour Explore'} selectedPackageTypeProps={'Bronze'} />
 }
 
 export default HalalTourPage

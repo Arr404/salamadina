@@ -22,9 +22,8 @@ const PackageViewDetails = ({ packageId, type }: { packageId: string, type:strin
         const language = getLanguage();
         const details = await packageDetailsService.getPackageTranslation(packageId, language);
         const packages = await umrahPackageservice.getPackageById(packageId,type);
-        setPackageSelected(packages);
-
-        if (details) {
+        setPackageSelected(packages)
+        if (packages) {
           setPackageDetails(details);
         } else {
           setError('Package details not found');
@@ -143,7 +142,7 @@ const PackageViewDetails = ({ packageId, type }: { packageId: string, type:strin
   }
 
   const renderContent = () => (
-    <section className="flex flex-col justify-center items-center gap-6 bg-white py-10 px-4 md:px-10">
+    <section className="flex flex-col justify-center items-center gap-6 bg-white py-10 px-4 md:px-10 mt-16">
       {/* Breadcrumbs */}
       <BreadCrumbCustom packageType={packageSelected?.packageType} subType={packageSelected?.subType} />
 

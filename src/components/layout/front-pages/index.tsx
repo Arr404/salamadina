@@ -13,6 +13,8 @@ import Header from '@components/layout/front-pages/Header'
 // Util Imports
 import { frontLayoutClasses } from '@layouts/utils/layoutClasses'
 import LoadingWrapper from '@views/loading'
+import classnames from 'classnames'
+import styles from '@components/layout/front-pages/styles.module.css'
 
 const FrontLayout = ({ children }: ChildrenType) => {
   // Vars
@@ -20,7 +22,7 @@ const FrontLayout = ({ children }: ChildrenType) => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <div className={frontLayoutClasses.root}>
+    <div  className={`${classnames(frontLayoutClasses.root, styles.frontLayout)}`} >
       <Header mode={mode} setIsLoading={setIsLoading} />
       {isLoading ? (
         <>

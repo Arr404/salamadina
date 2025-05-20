@@ -91,7 +91,7 @@ const GalleryList = ({ onEditItem }: GalleryListProps) => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+      <Box component="div" display="flex" justifyContent="center" alignItems="center" minHeight="300px">
         <CircularProgress />
       </Box>
     )
@@ -116,7 +116,7 @@ const GalleryList = ({ onEditItem }: GalleryListProps) => {
               />
             </Grid>
             <Grid item xs={12} md={4}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Box component="div" sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                   value={activeCategory}
                   onChange={handleCategoryChange}
@@ -134,7 +134,7 @@ const GalleryList = ({ onEditItem }: GalleryListProps) => {
         </CardContent>
       </Card>
 
-      <Box mt={6}>
+      <Box component="div" mt={6}>
         <Grid container spacing={4}>
           {filteredPhotos.length > 0 ? (
             filteredPhotos.map((photo: Photo) => (
@@ -148,7 +148,7 @@ const GalleryList = ({ onEditItem }: GalleryListProps) => {
                     sx={{ objectFit: 'cover', backgroundColor: photo.color || '#f5f5f5' }}
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                    <Box component="div" display="flex" justifyContent="space-between" alignItems="flex-start">
                       <Typography variant="h6" component="h3" noWrap>
                         {photo.title}
                       </Typography>
@@ -167,7 +167,7 @@ const GalleryList = ({ onEditItem }: GalleryListProps) => {
                         ? `${photo.description.substring(0, 100)}...`
                         : photo.description}
                     </Typography>
-                    <Box display="flex" flexWrap="wrap" gap={1}>
+                    <Box component="div" display="flex" flexWrap="wrap" gap={1}>
                       <Chip
                         size="small"
                         label={photo.category}
@@ -202,7 +202,7 @@ const GalleryList = ({ onEditItem }: GalleryListProps) => {
             ))
           ) : (
             <Grid item xs={12}>
-              <Box textAlign="center" py={4}>
+              <Box component="div" textAlign="center" py={4}>
                 <i className="tabler-photo-off text-5xl mb-2 text-gray-400" />
                 <Typography variant="h6">No photos found</Typography>
                 <Typography variant="body2" color="text.secondary">

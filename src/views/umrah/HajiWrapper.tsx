@@ -10,7 +10,10 @@ import { useSettings } from '@core/hooks/useSettings'
 import PackageFilter from '@views/umrah/PackageFilter'
 
 
-const HajiWrapper = () => {
+const HajiWrapper = (
+  {packageType,selectedPackageTypeProps}:
+  {packageType:string,selectedPackageTypeProps?:string}
+) => {
 /*  // States
   const [searchValue, setSearchValue] = useState('')*/
 
@@ -27,8 +30,8 @@ const HajiWrapper = () => {
 
   return (
     <>
-      <PackageHeader />
-      <PackageFilter tipePaket={'hajiPackages'}/>
+      <PackageHeader title={'Haji Packages'} />
+      <PackageFilter packageType={packageType} selectedPackageTypeProps={selectedPackageTypeProps} tipePaket={'hajiPackages'}/>
     </>
   )
 }

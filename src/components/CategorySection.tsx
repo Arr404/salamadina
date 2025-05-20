@@ -38,8 +38,8 @@ const CategorySection: React.FC<CategorySectionProps> = ({ category, packages })
       )}
 
       {/* Packages Grid */}
-      {packages.map((plan) => (
-        <PlanCard plan={plan}/>
+      {packages.map((plan,index) => (
+        <PlanCard plan={plan} key={index}/>
       ))}
     </>
   );

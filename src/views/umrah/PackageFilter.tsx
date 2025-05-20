@@ -32,8 +32,9 @@ interface DropdownProps<T> {
 }
 
 // Main component that integrates PackageFilter with PricingPlan
-const IntegratedPackages = ({ tipePaket, selectedPackageTypeProps }: {
+const IntegratedPackages = ({ tipePaket, packageType, selectedPackageTypeProps }: {
   tipePaket: string,
+  packageType: string,
   selectedPackageTypeProps?: string
 }) => {
   // State for packages
@@ -70,7 +71,7 @@ const IntegratedPackages = ({ tipePaket, selectedPackageTypeProps }: {
           fetchFilters()
         ])
 
-        setPackages(packagesData)
+        setPackages(packagesData.filter(p => p.packageType === packageType) || [])
         setFilters(filtersData)
       } catch (err) {
         setError('Failed to load data. Please try again later.')

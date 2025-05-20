@@ -76,7 +76,6 @@ const Wrapper = (props: WrapperProps) => {
 const FrontMenu = (props: Props) => {
   // Props
   const { isDrawerOpen, setIsDrawerOpen, mode } = props
-
   // Hooks
   const pathname = usePathname()
   const isBelowLgScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
@@ -90,7 +89,7 @@ const FrontMenu = (props: Props) => {
   }, [isBelowLgScreen])
 
   return (
-    <Wrapper isBelowLgScreen={isBelowLgScreen} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen}>
+    <Wrapper  isBelowLgScreen={isBelowLgScreen} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen}>
       <Typography
         color='text.primary'
         component={Link}
